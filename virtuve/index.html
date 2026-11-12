@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="lt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Naujoji virtuvė</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  /* Layout: full-bleed 3D canvas; a small floating panel top-left, viewpoint chips along the bottom. Single dark look over the scene. */
+  :root {
+    --ink: #f3eee7;
+    --muted: #b9b0a5;
+    --panel: rgba(28, 25, 23, .78);
+    --line: rgba(243, 238, 231, .16);
+    --walnut: #8a6243;
+    --graphite: #3a3b3e;
+    --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    color-scheme: dark;
+  }
+  html, body { height: 100%; }
+  [hidden] { display: none !important; }
+  body { background: #1c1917; color: var(--ink); font-family: var(--font-body); overflow: hidden; }
+  #c { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; outline: none; }
+  .panel {
+    position: fixed; z-index: 5;
+    top: calc(12px + env(safe-area-inset-top, 0px)); left: max(16px, env(safe-area-inset-left, 0px));
+    max-width: min(340px, calc(100vw - 32px));
+    background: var(--panel); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px;
+    display: grid; gap: 6px;
+  }
+  .panel h1 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 20px; letter-spacing: .01em; text-wrap: balance; }
+  .panel p { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--muted); }
+  .swatches { display: flex; gap: 10px; flex-wrap: wrap; font-size: 11px; color: var(--muted); }
+  .sw { display: inline-flex; align-items: center; gap: 5px; }
+  .sw i { width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--line); display: inline-block; }
+  #hide { justify-self: start; background: none; border: 0; color: var(--muted); font: inherit; font-size: 11.5px; padding: 0; cursor: pointer; text-decoration: underline; }
+  .panel.min p, .panel.min .swatches { display: none; }
+  .views {
+    position: fixed; z-index: 5; left: 0; right: 0;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+    display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; pointer-events: none;
+  }
+  .views button {
+    pointer-events: auto; font: 500 13px var(--font-body); color: var(--ink);
+    background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; cursor: pointer;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  }
+  .views button:hover { border-color: var(--walnut); }
+  button:focus-visible { outline: 2px solid var(--walnut); outline-offset: 2px; }
+  #start {
+    position: fixed; inset: 0; z-index: 8; display: grid; place-items: center;
+    background: rgba(20, 18, 16, .55); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  #start .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; max-width: 380px; display: grid; gap: 10px; text-align: left; }
+  #start h2 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 24px; }
+  #start ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 13.5px; line-height: 1.6; }
+  #go { font: 600 15px var(--font-body); background: var(--walnut); color: #fff; border: 0; border-radius: 8px; padding: 11px 16px; cursor: pointer; }
+  #go:disabled { opacity: .55; cursor: default; }
+  #bar { height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; }
+  #bar i { display: block; height: 100%; width: 0; background: var(--walnut); transition: width .2s; }
+  #joy { position: fixed; z-index: 6; width: 110px; height: 110px; border-radius: 50%; border: 1px solid var(--line); background: rgba(28,25,23,.35); pointer-events: none; display: none; }
+  #joy i { position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; margin: -22px; border-radius: 50%; background: rgba(243,238,231,.35); }
+  #cross { position: fixed; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px; border-radius: 50%; background: rgba(255,255,255,.7); z-index: 4; display: none; }
+  @media (max-width: 520px) { .panel h1 { font-size: 17px; } .views button { padding: 7px 11px; font-size: 12px; } }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&display=swap">
+<style>body{margin:0}</style>
+</head>
+<body>
+
+<canvas id="c" tabindex="0" aria-label="3D virtuvės vaizdas"></canvas>
+<div id="cross"></div>
+<div id="joy"><i></i></div>
+
+<section class="panel" id="panel">
+  <h1>Naujoji virtuvė</h1>
+  <p>Kompiuteryje: spustelk vaizdą ir judėk W A S D, žiūrėk pele, Shift greičiau, Esc atleisti pelę. Telefone: kairėje pusėje vesk pirštu, kad eitum, dešinėje, kad apsidairytum.</p>
+  <div class="swatches">
+    <span class="sw"><i style="background:#3c3a36"></i>RT1522 OR stalviršis</span>
+    <span class="sw"><i style="background:var(--graphite)"></i>U961 grafitas</span>
+    <span class="sw"><i style="background:var(--walnut)"></i>H7586 riešutmedis</span>
+  </div>
+  <button id="hide" type="button">Slėpti aprašymą</button>
+</section>
+
+<nav class="views" aria-label="Vaizdo taškai">
+  <button type="button" data-v="kitchen">Virtuvė</button>
+  <button type="button" data-v="island">Sala ir terasa</button>
+  <button type="button" data-v="fridge">Šaldytuvo siena</button>
+  <button type="button" data-v="corridor">Koridorius</button>
+  <button type="button" data-v="living">Iš svetainės</button>
+</nav>
+
+<div id="start">
+  <div class="card">
+    <h2>Pasivaikščiok po virtuvę</h2>
+    <ul>
+      <li>W A S D arba rodyklės: eiti, pelė: dairytis</li>
+      <li>Telefone: kairė pusė eiti, dešinė dairytis</li>
+      <li>Apačioje esantys mygtukai perkelia į kitą vietą</li>
+    </ul>
+    <div id="bar"><i></i></div>
+    <button id="go" type="button" disabled>Kraunama…</button>
+  </div>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { Sky } from 'three/addons/objects/Sky.js';
+
+// Room facts (metres): kitchen 5.0 long, 3.10 wall-to-window, ceiling 2.51.
+// Scene axes: x = length (0 = fridge wall, 5 = passage to living room), z = 0 terrace glass .. 3.1 kitchen wall.
+const EYE = 1.6, H = 2.51, W = 3.1, LEN = 5.0;
+
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+renderer.setSize(innerWidth, innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.AgXToneMapping;
+renderer.toneMappingExposure = .62;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(70, innerWidth / innerHeight, 0.05, 3000);
+camera.rotation.order = 'YXZ';
+
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.12;
+
+// Evening: dusk sky, last orange sun on the horizon; warm interior lights carry the room
+const sky = new Sky(); sky.scale.setScalar(2000); scene.add(sky);
+const su = sky.material.uniforms;
+su.turbidity.value = 9; su.rayleigh.value = 3; su.mieCoefficient.value = .006; su.mieDirectionalG.value = .9;   // dusk
+const sunDir = new THREE.Vector3().setFromSphericalCoords(1, THREE.MathUtils.degToRad(90 - 1.5), THREE.MathUtils.degToRad(215));
+su.sunPosition.value.copy(sunDir);
+
+scene.add(new THREE.HemisphereLight(0x5c6b8f, 0x221d18, .12));
+const sun = new THREE.DirectionalLight(0xff8a4c, .45);
+const target = new THREE.Vector3(3.5, 0, 1.5);
+sun.position.copy(target).addScaledVector(new THREE.Vector3(-.45, .2, -1).normalize(), 14);
+sun.target.position.copy(target);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -9, right: 9, top: 9, bottom: -9, near: 1, far: 40 });
+sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.03;
+scene.add(sun, sun.target);
+
+// warm interior lights (same layout as the renders)
+const warm = 0xffdcb8;
+const IX0 = 1.9, IZ = 1.1, RX0 = LEN - 3.62, HOB_X = RX0 + 2.62;
+for (let k = 0; k < 3; k++) { const p = new THREE.PointLight(0xffc28a, 5, 5, 2); p.position.set(IX0 + .3 + k * .6, 1.57, IZ); scene.add(p); }
+for (const [x, z] of [[.7, 1.6], [1.8, 2.2], [3.0, 2.2], [4.2, 2.2], [2.8, .4], [4.1, .4], [.7, 4.0], [.7, 5.3]]) {
+  const s = new THREE.SpotLight(warm, 8, 6, .9, .75, 2); s.position.set(x, H - .02, z); s.target.position.set(x, 0, z); scene.add(s, s.target);
+}
+for (let x = RX0 + .3; x < HOB_X - .3; x += .7) { const p = new THREE.PointLight(0xffc48c, 1.8, 1.6, 2); p.position.set(x, 1.44, W - .25); scene.add(p); }
+{ const lamp = new THREE.PointLight(0xffb070, 9, 6, 2); lamp.position.set(LEN + 3.95, 1.58, W + 1.3); scene.add(lamp);
+  const win = new THREE.PointLight(0x7f8fbf, 1.2, 7, 2); win.position.set(LEN + 4.2, 1.4, 1.5); scene.add(win); }
+
+// procedural textures for materials that Blender kept as node setups (UVs are in metres)
+function canvasTex(px, metres, draw) {
+  const c = document.createElement('canvas'); c.width = px[0]; c.height = px[1];
+  draw(c.getContext('2d'), c.width, c.height);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8;
+  t.repeat.set(1 / metres[0], 1 / metres[1]); return t;
+}
+const rnd = (a, b) => a + Math.random() * (b - a);
+function speckle(g, w, h, n, rgb, amax, rmax) {
+  for (let i = 0; i < n; i++) { g.fillStyle = `rgba(${rgb},${rnd(0, amax)})`; g.beginPath(); g.arc(rnd(0, w), rnd(0, h), rnd(1, rmax), 0, 7); g.fill(); }
+}
+function planks(g, w, h, rows, colors, grout, vertical) {
+  const rh = (vertical ? w : h) / rows;
+  for (let r = 0; r < rows; r++) {
+    const off = r % 2 ? .5 : 0;
+    for (let k = -1; k < 2; k++) {
+      const c = colors[(r * 3 + k + 9) % colors.length]; g.fillStyle = c;
+      const a = (k + off) * (vertical ? h : w), L = vertical ? h : w;
+      if (vertical) g.fillRect(r * rh, a, rh, L); else g.fillRect(a, r * rh, L, rh);
+    }
+    for (let i = 0; i < 40; i++) {
+      g.fillStyle = `rgba(70,45,25,${rnd(0, .12)})`;
+      if (vertical) g.fillRect(r * rh + rnd(0, rh), 0, rnd(.5, 2), h); else g.fillRect(0, r * rh + rnd(0, rh), w, rnd(.5, 2));
+    }
+    g.fillStyle = grout;
+    if (vertical) g.fillRect(r * rh, 0, 2, h); else g.fillRect(0, r * rh, w, 2);
+    for (let k = 0; k < 3; k++) { const a = (k + off) * (vertical ? h : w); if (vertical) g.fillRect(r * rh, a, rh, 2); else g.fillRect(a, r * rh, 2, rh); }
+  }
+}
+const TEX = {
+  'floor tiles': () => canvasTex([1024, 1024], [1.2, 1.2], (g, w, h) => {   // 60x120 light stone-look tiles, half offset
+    for (const [y, xs] of [[0, [0]], [.5, [-.5, .5]]]) for (const x of xs) {
+      const l = rnd(-5, 5); g.fillStyle = `rgb(${222 + l},${217 + l},${208 + l})`; g.fillRect(x * w, y * h, w, h / 2);
+    }
+    speckle(g, w, h, 1800, '150,140,128', .07, 26); speckle(g, w, h, 1500, '255,252,246', .08, 18);
+    g.fillStyle = '#b6afa4'; g.fillRect(0, 0, w, 2); g.fillRect(0, h / 2, w, 2); g.fillRect(0, 0, 2, h / 2); g.fillRect(w / 2, h / 2, 2, h / 2);
+  }),
+  'oak floor': () => canvasTex([1024, 1024], [2.2, 1.12], (g, w, h) => planks(g, w, h, 8, ['#c79a64', '#b98a55', '#cfa46e', '#be905b'], 'rgba(90,60,30,.6)')),
+  'deck boards': () => canvasTex([1024, 512], [2.4, .56], (g, w, h) => planks(g, w, h, 4, ['#a8a096', '#9b9389', '#b0a89e'], 'rgba(40,35,30,.7)')),
+  'terrace roof boards': () => canvasTex([1024, 512], [3.0, .48], (g, w, h) => planks(g, w, h, 4, ['#c4a070', '#b48e60', '#cba878'], 'rgba(80,55,30,.6)')),
+  'fence': () => canvasTex([512, 1024], [.56, 3.0], (g, w, h) => planks(g, w, h, 4, ['#8c6848', '#7c5a3c', '#946f4e'], 'rgba(40,30,20,.7)', true)),
+  'grass': () => canvasTex([512, 512], [3, 3], (g, w, h) => { g.fillStyle = '#5f8a3c'; g.fillRect(0, 0, w, h); speckle(g, w, h, 4000, '40,70,25', .25, 6); speckle(g, w, h, 3000, '140,170,80', .2, 4); }),
+};
+const COLOR = { leaves: 0x4f7a33, leaves2: 0x6f9445 };
+
+function fixMaterial(m) {
+  const n = m.name;
+  if (TEX[n]) { m.map = TEX[n](); m.color.set(0xffffff); m.roughness = n === 'floor tiles' ? .38 : .7; }
+  if (COLOR[n]) { m.color.set(COLOR[n]); m.roughness = .85; }
+  if (n === 'U961 Graphite') m.roughness = .66;
+  if (n === 'RT1522 OR') m.roughness = .55;
+  if (n === 'walnut H7586') { m.roughness = .82; m.envMapIntensity = .35; m.normalMap = null; }   // matte ST17 finish, same tone at every angle
+  if (n === 'curtain taupe') m.side = THREE.DoubleSide;
+  if (n === 'sheer curtain') return new THREE.MeshStandardMaterial({ name: n, color: 0xf3efe8, transparent: true, opacity: .55, side: THREE.DoubleSide, roughness: 1 });
+  if (n === 'glass') return new THREE.MeshPhysicalMaterial({ name: n, color: 0xffffff, transparent: true, opacity: .1, roughness: 0, depthWrite: false });
+  return m;
+}
+
+// collision: axis-aligned boxes of everything between knee and head height
+const solids = [];
+const NO_COLLIDE = new Set(['glass', 'sheer curtain', 'curtain taupe']);
+
+const bar = document.querySelector('#bar i'), go = document.getElementById('go');
+// The model ships as glTF JSON with its binary buffer base64-embedded; rebuild a GLB in memory and parse it.
+async function loadModel() {
+  const res = await fetch('kitchen.json');
+  const total = +res.headers.get('content-length') || 3545394;
+  const reader = res.body.getReader(); const parts = []; let got = 0;
+  for (;;) { const { done, value } = await reader.read(); if (done) break; parts.push(value); got += value.length; bar.style.width = Math.min(90, got / total * 90).toFixed(0) + '%'; }
+  const json = JSON.parse(new TextDecoder().decode(await new Blob(parts).arrayBuffer()));
+  const b64 = json.buffers[0].uri.split(',')[1]; delete json.buffers[0].uri;
+  const bin = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+  let js = new TextEncoder().encode(JSON.stringify(json));
+  const jpad = (4 - js.length % 4) % 4, bpad = (4 - bin.length % 4) % 4;
+  const jlen = js.length + jpad, blen = bin.length + bpad;
+  const glb = new ArrayBuffer(12 + 8 + jlen + 8 + blen), dv = new DataView(glb), u8 = new Uint8Array(glb);
+  dv.setUint32(0, 0x46546C67, true); dv.setUint32(4, 2, true); dv.setUint32(8, glb.byteLength, true);
+  dv.setUint32(12, jlen, true); dv.setUint32(16, 0x4E4F534A, true); u8.set(js, 20); u8.fill(0x20, 20 + js.length, 20 + jlen);
+  const o = 20 + jlen; dv.setUint32(o, blen, true); dv.setUint32(o + 4, 0x004E4942, true); u8.set(bin, o + 8);
+  return new Promise((ok, bad) => new GLTFLoader().parse(glb, '', ok, bad));
+}
+loadModel().then((gltf) => {
+  const root = gltf.scene;
+  root.traverse((o) => {
+    if (!o.isMesh) return;
+    o.material = fixMaterial(o.material);
+    const em = o.material.emissive && o.material.emissive.getHex() !== 0;
+    o.castShadow = !NO_COLLIDE.has(o.material.name) && !em;
+    o.receiveShadow = true;
+  });
+  scene.add(root);
+  root.updateMatrixWorld(true);
+  root.traverse((o) => {
+    if (!o.isMesh || NO_COLLIDE.has(o.material.name)) return;
+    const b = new THREE.Box3().setFromObject(o);
+    if (b.max.y > .25 && b.min.y < 1.7) solids.push(b);
+  });
+  bar.style.width = '100%'; go.disabled = false; go.textContent = 'Pradėti';
+  setView('kitchen');
+}).catch(() => { go.textContent = 'Nepavyko įkelti modelio. Perkrauk puslapį.'; });
+
+// viewpoints: [position x,z], [look-at x,y,z]
+const VIEWS = {
+  kitchen: [[.85, .5], [5.0, 1.0, 2.45]],
+  island: [[2.8, 2.35], [2.8, 1.1, -4]],
+  fridge: [[3.9, 2.1], [0, 1.15, 1.6]],
+  corridor: [[2.0, .5], [.7, 1.2, 4.2]],
+  living: [[8.9, 1.55], [1.0, 1.0, 1.55]],
+};
+let yaw = 0, pitch = 0;
+function setView(name) {
+  const [[x, z], [lx, ly, lz]] = VIEWS[name];
+  camera.position.set(x, EYE, z);
+  const d = new THREE.Vector3(lx - x, ly - EYE, lz - z).normalize();
+  yaw = Math.atan2(-d.x, -d.z); pitch = Math.asin(d.y);
+}
+document.querySelectorAll('.views button').forEach((b) => b.addEventListener('click', () => { setView(b.dataset.v); canvas.focus(); }));
+document.getElementById('hide').addEventListener('click', (e) => {
+  const p = document.getElementById('panel'); p.classList.toggle('min');
+  e.target.textContent = p.classList.contains('min') ? 'Rodyti aprašymą' : 'Slėpti aprašymą';
+});
+
+// input: keyboard + pointer lock (desktop), drag fallback, touch joystick (phones)
+const keys = new Set();
+addEventListener('keydown', (e) => { keys.add(e.code); if (e.code.startsWith('Arrow')) e.preventDefault(); });
+addEventListener('keyup', (e) => keys.delete(e.code));
+addEventListener('blur', () => keys.clear());
+const look = (dx, dy, k) => { yaw -= dx * k; pitch = Math.max(-1.4, Math.min(1.4, pitch - dy * k)); };
+let locked = false;
+document.addEventListener('pointerlockchange', () => { locked = document.pointerLockElement === canvas; document.getElementById('cross').style.display = locked ? 'block' : 'none'; });
+document.addEventListener('mousemove', (e) => { if (locked) look(e.movementX, e.movementY, .0022); });
+
+const joy = document.getElementById('joy'), knob = joy.querySelector('i');
+let moveTouch = null, lookTouch = null, joyVec = { x: 0, y: 0 }, drag = null;
+canvas.addEventListener('pointerdown', (e) => {
+  if (e.pointerType === 'mouse') {
+    if (!locked && canvas.requestPointerLock) {
+      try { const r = canvas.requestPointerLock(); if (r && r.catch) r.catch(() => {}); } catch (_) {}
+    }
+    drag = { x: e.clientX, y: e.clientY }; return;
+  }
+  canvas.setPointerCapture(e.pointerId);
+  if (e.clientX < innerWidth / 2 && !moveTouch) {
+    moveTouch = { id: e.pointerId, x: e.clientX, y: e.clientY };
+    joy.style.display = 'block'; joy.style.left = (e.clientX - 55) + 'px'; joy.style.top = (e.clientY - 55) + 'px';
+  } else if (!lookTouch) lookTouch = { id: e.pointerId, x: e.clientX, y: e.clientY };
+});
+canvas.addEventListener('pointermove', (e) => {
+  if (e.pointerType === 'mouse') { if (drag && !locked) { look(e.clientX - drag.x, e.clientY - drag.y, .004); drag = { x: e.clientX, y: e.clientY }; } return; }
+  if (moveTouch && e.pointerId === moveTouch.id) {
+    let dx = e.clientX - moveTouch.x, dy = e.clientY - moveTouch.y; const l = Math.hypot(dx, dy), m = 45;
+    if (l > m) { dx *= m / l; dy *= m / l; }
+    joyVec = { x: dx / m, y: dy / m }; knob.style.transform = `translate(${dx}px, ${dy}px)`;
+  } else if (lookTouch && e.pointerId === lookTouch.id) {
+    look(e.clientX - lookTouch.x, e.clientY - lookTouch.y, .005); lookTouch.x = e.clientX; lookTouch.y = e.clientY;
+  }
+});
+const endTouch = (e) => {
+  if (e.pointerType === 'mouse') { drag = null; return; }
+  if (moveTouch && e.pointerId === moveTouch.id) { moveTouch = null; joyVec = { x: 0, y: 0 }; joy.style.display = 'none'; knob.style.transform = ''; }
+  if (lookTouch && e.pointerId === lookTouch.id) lookTouch = null;
+};
+canvas.addEventListener('pointerup', endTouch); canvas.addEventListener('pointercancel', endTouch);
+
+const R = .22;
+function blocked(x, z) {
+  for (const b of solids) if (x > b.min.x - R && x < b.max.x + R && z > b.min.z - R && z < b.max.z + R) return true;
+  return false;
+}
+const clock = new THREE.Clock();
+function frame() {
+  const dt = Math.min(clock.getDelta(), .05);
+  let f = 0, s = 0;
+  if (keys.has('KeyW') || keys.has('ArrowUp')) f += 1;
+  if (keys.has('KeyS') || keys.has('ArrowDown')) f -= 1;
+  if (keys.has('KeyD') || keys.has('ArrowRight')) s += 1;
+  if (keys.has('KeyA') || keys.has('ArrowLeft')) s -= 1;
+  f -= joyVec.y; s += joyVec.x;
+  if (f || s) {
+    const sp = (keys.has('ShiftLeft') || keys.has('ShiftRight') ? 3 : 1.5) * dt;
+    const sin = Math.sin(yaw), cos = Math.cos(yaw);
+    const dx = (-sin * f + cos * s) * sp, dz = (-cos * f - sin * s) * sp;
+    const p = camera.position;
+    if (!blocked(p.x + dx, p.z)) p.x += dx;
+    if (!blocked(p.x, p.z + dz)) p.z += dz;
+  }
+  camera.rotation.set(pitch, yaw, 0);
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+frame();
+
+go.addEventListener('click', () => { document.getElementById('start').hidden = true; canvas.focus(); });
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+window.__setView = setView;
+</script>
+</body>
+</html>
