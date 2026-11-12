@@ -79,9 +79,9 @@
   <h1>Naujoji virtuvė</h1>
   <p>Kompiuteryje: spustelk vaizdą ir judėk W A S D, žiūrėk pele, Shift greičiau, Esc atleisti pelę. Telefone: kairėje pusėje vesk pirštu, kad eitum, dešinėje, kad apsidairytum.</p>
   <div class="swatches">
-    <span class="sw"><i style="background:#3c3a36"></i>RT1522 OR stalviršis</span>
-    <span class="sw"><i style="background:var(--graphite)"></i>U961 grafitas</span>
-    <span class="sw"><i style="background:var(--walnut)"></i>H7586 riešutmedis</span>
+    <span class="sw"><i style="background:#c9bfae"></i>F226 ST78 stalviršis</span>
+    <span class="sw"><i style="background:#a0968a"></i>U750 ST9 spintelės</span>
+    <span class="sw"><i style="background:#b58c62"></i>H1180 ST37 ąžuolas</span>
   </div>
   <button id="hide" type="button">Slėpti aprašymą</button>
 </section>
@@ -216,13 +216,64 @@ const TEX = {
 };
 const COLOR = { leaves: 0x4f7a33, leaves2: 0x6f9445 };
 
+// Selected decors (walkthrough only): U750 ST9 Taupe Grey fronts, H1180 ST37 Natural Halifax Oak, F226 ST78 Sand Beige Titanite worktop
+const DECOR = {
+  oak: { m: [2.0, 1.0], make: () => canvasTex([2048, 1024], [1, 1], (g, w, h) => {      // H1180: natural oak, long grain, knots, small cracks
+    g.fillStyle = '#b58c62'; g.fillRect(0, 0, w, h);
+    let y = 0;
+    while (y < h) {                                         // board-width colour bands across the grain
+      const bh = rnd(60, 180), l = rnd(-14, 14);
+      g.fillStyle = `rgb(${181 + l},${141 + l * .9},${100 + l * .7})`; g.fillRect(0, y, w, bh); y += bh;
+    }
+    for (let i = 0; i < 900; i++) {                         // grain streaks (full width, so they tile along the grain)
+      const yy = rnd(0, h), amp = rnd(1, 6), ph = rnd(0, 6.28), dark = Math.random() < .6;
+      g.strokeStyle = dark ? `rgba(95,62,32,${rnd(.04, .2)})` : `rgba(230,200,160,${rnd(.04, .14)})`;
+      g.lineWidth = rnd(.6, 2.4); g.beginPath();
+      for (let x = 0; x <= w; x += 16) g.lineTo(x, yy + amp * Math.sin(x / w * 6.283 * 2 + ph));
+      g.stroke();
+    }
+    for (let k = 0; k < 9; k++) {                           // knots, drawn twice across the seam
+      const kx = rnd(0, w), ky = rnd(40, h - 40), r = rnd(6, 16);
+      for (const ox of [0, -w, w]) {
+        for (let ring = 5; ring >= 0; ring--) {
+          g.fillStyle = `rgba(${80 + ring * 12},${50 + ring * 9},${25 + ring * 6},${ring ? .22 : .9})`;
+          g.beginPath(); g.ellipse(kx + ox, ky, r * (1 + ring * .9) * 2.2, r * (1 + ring * .5), 0, 0, 7); g.fill();
+        }
+      }
+    }
+    for (let k = 0; k < 14; k++) { g.strokeStyle = 'rgba(60,38,18,.55)'; g.lineWidth = rnd(.8, 1.6); const cx = rnd(0, w), cy = rnd(0, h), L = rnd(30, 120);
+      g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + L, cy + rnd(-3, 3)); g.stroke(); }
+  }) },
+  sand: { m: [1.2, 1.2], make: () => canvasTex([1024, 1024], [1, 1], (g, w, h) => {      // F226: light sandstone, grey-to-brown cloudy blotches
+    g.fillStyle = '#c9bfae'; g.fillRect(0, 0, w, h);
+    const blot = (n, col, rmin, rmax, a) => { for (let i = 0; i < n; i++) { const x = rnd(0, w), y = rnd(0, h), r = rnd(rmin, rmax);
+      for (const [ox, oy] of [[0, 0], [w, 0], [-w, 0], [0, h], [0, -h]]) { const gr = g.createRadialGradient(x + ox, y + oy, 0, x + ox, y + oy, r);
+        gr.addColorStop(0, `rgba(${col},${a})`); gr.addColorStop(1, `rgba(${col},0)`); g.fillStyle = gr; g.fillRect(x + ox - r, y + oy - r, 2 * r, 2 * r); } } };
+    blot(60, '150,146,140', 60, 220, .35); blot(50, '176,150,118', 50, 200, .3); blot(40, '228,220,206', 40, 160, .35);
+    speckle(g, w, h, 9000, '110,100,90', .25, 1.6); speckle(g, w, h, 5000, '250,245,236', .3, 1.4);
+  }) },
+};
+function swapMap(m, decor, oldTile) {
+  const old = m.map, t = decor.make();
+  t.flipY = false;
+  if (old) { t.offset.copy(old.offset); t.rotation = old.rotation; t.center.copy(old.center);
+    t.repeat.set(old.repeat.x * oldTile[0] / decor.m[0], old.repeat.y * oldTile[1] / decor.m[1]); }
+  m.map = t; m.color.set(0xffffff);
+}
+
+const fixed = new Map();   // material -> replacement, so each shared material (and its textures) is built once
 function fixMaterial(m) {
+  if (fixed.has(m)) return fixed.get(m);
+  const r = fixMaterialOnce(m); fixed.set(m, r); return r;
+}
+function fixMaterialOnce(m) {
   const n = m.name;
+  m.normalMap = null;   // Blender bump nodes export as a normal map built from the colour image; it breaks lighting
   if (TEX[n]) { m.map = TEX[n](); m.color.set(0xffffff); m.roughness = n === 'floor tiles' ? .38 : .7; }
   if (COLOR[n]) { m.color.set(COLOR[n]); m.roughness = .85; }
-  if (n === 'U961 Graphite') m.roughness = .66;
-  if (n === 'RT1522 OR') m.roughness = .55;
-  if (n === 'walnut H7586') { m.roughness = .82; m.envMapIntensity = .35; m.normalMap = null; }   // matte ST17 finish, same tone at every angle
+  if (n === 'U961 Graphite') { m.color.set(0xa0968a); m.roughness = .82; m.envMapIntensity = .3; }        // -> U750 ST9 Taupe Grey (smooth matt)
+  if (n === 'RT1522 OR') { swapMap(m, DECOR.sand, [.55, .55]); m.roughness = .6; m.envMapIntensity = .4; }   // -> F226 ST78 Sand Beige Titanite
+  if (n === 'walnut H7586') { swapMap(m, DECOR.oak, [.45, .26]); m.roughness = .78; m.envMapIntensity = .3; m.normalMap = null; }  // -> H1180 ST37 Natural Halifax Oak
   if (n === 'curtain taupe') m.side = THREE.DoubleSide;
   if (n === 'sheer curtain') return new THREE.MeshStandardMaterial({ name: n, color: 0xf3efe8, transparent: true, opacity: .55, side: THREE.DoubleSide, roughness: 1 });
   if (n === 'glass') return new THREE.MeshPhysicalMaterial({ name: n, color: 0xffffff, transparent: true, opacity: .1, roughness: 0, depthWrite: false });
@@ -365,7 +416,7 @@ frame();
 
 go.addEventListener('click', () => { document.getElementById('start').hidden = true; canvas.focus(); });
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
-window.__setView = setView;
+window.__setView = setView; window.__scene = scene;
 </script>
 </body>
 </html>
