@@ -1,0 +1,56 @@
+{
+  "virtuve/kitchen.json": {
+    "mtime": 1794603936.994729,
+    "seen": 1794604187.4148052,
+    "ast_hash": "fb3754de134b83866a5cafa66248d912",
+    "semantic_hash": "fb3754de134b83866a5cafa66248d912"
+  },
+  ".claude/CLAUDE.md": {
+    "mtime": 1794603936.9864988,
+    "seen": 1794604187.4148104,
+    "ast_hash": "9b31786b637be3c13978bec4c2330752",
+    "semantic_hash": "9b31786b637be3c13978bec4c2330752"
+  },
+  ".claude/skills/3d-modeling/SKILL.md": {
+    "mtime": 1794603936.9872,
+    "seen": 1794604187.4148126,
+    "ast_hash": "5988f0842888d2b5f416ee37c6619454",
+    "semantic_hash": "5988f0842888d2b5f416ee37c6619454"
+  },
+  ".claude/skills/3d-modeling/SOURCE.md": {
+    "mtime": 1794603936.9872,
+    "seen": 1794604187.414814,
+    "ast_hash": "f03b8700b7f39b67a0f5fb711b2ca498",
+    "semantic_hash": "f03b8700b7f39b67a0f5fb711b2ca498"
+  },
+  ".claude/skills/3d-modeling/references/patterns.md": {
+    "mtime": 1794603936.9872,
+    "seen": 1794604187.4148147,
+    "ast_hash": "7370057aef9b0cdf32df3168d984a9fb",
+    "semantic_hash": "7370057aef9b0cdf32df3168d984a9fb"
+  },
+  ".claude/skills/3d-modeling/references/sharp_edges.md": {
+    "mtime": 1794603936.9875102,
+    "seen": 1794604187.4148157,
+    "ast_hash": "64f0caca9c410b08254f418768539bbc",
+    "semantic_hash": "64f0caca9c410b08254f418768539bbc"
+  },
+  ".claude/skills/3d-modeling/references/validations.md": {
+    "mtime": 1794603936.9875102,
+    "seen": 1794604187.4148169,
+    "ast_hash": "c23f11d862c0bbc1c2a1a0eb36ecb97b",
+    "semantic_hash": "c23f11d862c0bbc1c2a1a0eb36ecb97b"
+  },
+  ".claude/skills/ponytail/SKILL.md": {
+    "mtime": 1794603936.9880583,
+    "seen": 1794604187.4148176,
+    "ast_hash": "546be8ebd490e5b8d3b291c33442641a",
+    "semantic_hash": "546be8ebd490e5b8d3b291c33442641a"
+  },
+  "virtuve/index.html": {
+    "mtime": 1794603936.9880583,
+    "seen": 1794604187.4148183,
+    "ast_hash": "6751c6117774e4c1cb11f3cdf39d1cb8",
+    "semantic_hash": "6751c6117774e4c1cb11f3cdf39d1cb8"
+  }
+}
