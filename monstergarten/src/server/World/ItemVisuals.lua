@@ -233,6 +233,19 @@ function ItemVisuals.trash(count: number?): Model
 	return m
 end
 
+function ItemVisuals.egg(): Model
+	local m = Instance.new("Model")
+	m.Name = "MysteryEgg"
+	handle(m)
+	local e = ball(m, 1.6, CFrame.new(0, 0.2, 0), Color3.fromRGB(255, 240, 220))
+	e.Size = Vector3.new(1.6, 1.6, 1.6)
+	for i = 1, 5 do
+		ball(m, 0.35, CFrame.new(math.cos(i) * 0.6, 0.2 + math.sin(i * 2) * 0.5, math.sin(i) * 0.6), Color3.fromRGB(195, 177, 225))
+	end
+	emojiTag(m, "🥚", 1.6)
+	return m
+end
+
 function ItemVisuals.forHeld(held: any, skinId: string?): Model?
 	if held.Kind == "Tool" then
 		return ItemVisuals.tool(held.Id, skinId)
@@ -242,6 +255,8 @@ function ItemVisuals.forHeld(held: any, skinId: string?): Model?
 		return ItemVisuals.dish(held.Id)
 	elseif held.Kind == "Trash" then
 		return ItemVisuals.trash(held.Extra)
+	elseif held.Kind == "Egg" then
+		return ItemVisuals.egg()
 	end
 	return nil
 end
