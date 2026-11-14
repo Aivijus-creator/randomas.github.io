@@ -1,0 +1,46 @@
+{
+  "name": "Monstergarten",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "Shared": { "$path": "src/shared" },
+      "Assets": {
+        "$className": "Folder",
+        "Babies": { "$className": "Folder" },
+        "Parents": { "$className": "Folder" },
+        "NPCs": { "$className": "Folder" },
+        "Icons": { "$className": "Folder" }
+      }
+    },
+    "ServerScriptService": {
+      "Server": { "$path": "src/server" }
+    },
+    "ServerStorage": {
+      "Maps": { "$className": "Folder" }
+    },
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "Client": { "$path": "src/client" }
+      },
+      "$properties": {
+        "CameraMaxZoomDistance": 40,
+        "CharacterWalkSpeed": 16
+      }
+    },
+    "Workspace": {
+      "$properties": {
+        "StreamingEnabled": true,
+        "Gravity": 196.2
+      }
+    },
+    "Lighting": {
+      "$properties": {
+        "Technology": "Future",
+        "ClockTime": 18.5
+      }
+    },
+    "SoundService": {
+      "$properties": { "RespectFilteringEnabled": true }
+    }
+  }
+}

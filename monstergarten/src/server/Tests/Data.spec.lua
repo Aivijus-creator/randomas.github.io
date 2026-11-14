@@ -1,0 +1,22 @@
+return function(t)
+	local Shared = game:GetService("ReplicatedStorage"):WaitForChild("Shared")
+	local DataSchema = require(Shared.Logic.DataSchema)
+
+	t.case("template is current version", function()
+		t.eq(DataSchema.template().DataVersion, DataSchema.Version)
+	end)
+	t.case("migrate v1 -> current keeps values and fills new keys", function()
+		local old = { DataVersion = 1, Coins = 123, Cosmetics = { Owned = { Hat_Bow = true }, Equipped = { ToolSkins = {} } } }
+		local d = DataSchema.migrate(old)
+		t.eq(d.DataVersion, DataSchema.Version)
+		t.eq(d.Coins, 123)
+		t.eq(d.Cosmetics.Equipped.Hat, "")
+		t.ok(d.Cosmetics.Owned.Hat_Bow)
+		t.ok(type(d.Stats) == "table" and d.Stats.ShiftsPlayed == 0)
+		t.ok(type(d.SeenBabies) == "table")
+		t.eq(d.Settings.Language, "auto")
+	end)
+	t.case("garbage becomes template", function()
+		t.eq(DataSchema.migrate(nil).Coins, 0)
+	end)
+end
