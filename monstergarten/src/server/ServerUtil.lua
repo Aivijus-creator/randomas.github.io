@@ -117,6 +117,7 @@ function ServerUtil.prompt(parent: Instance, action: string, opts: { [string]: a
 	pp.Style = Enum.ProximityPromptStyle.Custom
 	pp.Exclusivity = Enum.ProximityPromptExclusivity.OnePerButton
 	pp:SetAttribute("Action", action)
+	game:GetService("CollectionService"):AddTag(pp, "MGPrompt")
 	if o.Need then
 		pp:SetAttribute("NeedHeld", o.Need) -- client filter hint, e.g. "Empty", "Tool:Extinguisher", "Kind:Dish"
 	end

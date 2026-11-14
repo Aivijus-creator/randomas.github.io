@@ -196,6 +196,32 @@ function DataService:Start()
 		task.spawn(onPlayerAdded, p)
 	end
 
+	-- Player settings (validated).
+	local VALID = {
+		MusicVolume = function(v)
+			return type(v) == "number" and v >= 0 and v <= 1
+		end,
+		SfxVolume = function(v)
+			return type(v) == "number" and v >= 0 and v <= 1
+		end,
+		Language = function(v)
+			return v == "auto" or v == "en" or v == "lt"
+		end,
+		CameraShake = function(v)
+			return type(v) == "boolean"
+		end,
+		Quality = function(v)
+			return v == "High" or v == "Low" or v == "Auto"
+		end,
+	}
+	Remotes.event("SetSetting").OnServerEvent:Connect(function(player, key, value)
+		if type(key) == "string" and VALID[key] and VALID[key](value) then
+			DataService:Update(player, function(d)
+				d.Settings[key] = value
+			end)
+		end
+	end)
+
 	-- Replicate dirty profiles at most 4x per second.
 	task.spawn(function()
 		local ev = Remotes.event("DataChanged")

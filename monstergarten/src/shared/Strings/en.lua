@@ -1,0 +1,103 @@
+-- English strings (default).
+return {
+	-- generic
+	On = "On", Off = "Off", Coins = "Coins", Name_Generic = "{1}",
+	Loading_Tagline = "Warming up the bottles...",
+	-- menu / HUD
+	Menu_Shop = "🛒 Shop", Menu_Wardrobe = "👗 Wardrobe", Menu_Pets = "🐾 Pets", Menu_Quests = "📜 Quests", Menu_Daily = "🎁 Daily", Menu_Settings = "⚙️ Settings",
+	HUD_DaycareLevel = "🏠 Daycare Lv {1}  (⭐ {2})", HUD_NannyLevel = "🍼 Nanny Lv {1} · {2}", HUD_Building = "🏠 Building",
+	HUD_HeldHint = "E pick up · Q drop · Click use",
+	Banner_ParentsComing = "🚗 The parents are on their way!",
+	-- titles
+	Title_Rookie = "Rookie Nanny", Title_Helper = "Handy Helper", Title_Whisperer = "Monster Whisperer", Title_Tamer = "Tantrum Tamer", Title_ChaosLord = "Lord of Chaos", Title_Legend = "Legendary Nanny",
+	-- settings
+	Settings_Title = "⚙️ Settings", Settings_Music = "🎵 Music", Settings_Sfx = "🔊 Effects", Settings_Language = "🌍 Language", Settings_Shake = "📳 Camera shake",
+	Settings_Quality = "✨ Effects quality", Settings_Tutorial = "📖 Tutorial", Settings_Replay = "Play again", Settings_Auto = "Auto",
+	Settings_MusicBox = "🎶 Music box",
+	Quality_High = "High", Quality_Low = "Low (phones)", Quality_Auto = "Auto",
+	-- queue
+	Queue_Title = "🍼 Shift door", Queue_Solo = "🙋 Solo shift", Queue_Tutorial = "📖 Tutorial", Queue_Starting = "starting in {1}s",
+	Queue_Waiting = "⏳ Waiting for a free daycare...", Queue_StartNow = "▶ Start now", Queue_Leave = "✖ Leave",
+	Queue_Busy = "Someone is already using this door.", Queue_Full = "This shift is full!", Queue_NoSlot = "All daycares are busy - try again in a moment.",
+	Queue_DifficultyLocked = "That difficulty is still locked.",
+	Difficulty_Easy = "😊 Easy", Difficulty_Normal = "😬 Normal", Difficulty_Nightmare = "😱 Nightmare",
+	-- cutscenes
+	Cutscene_Arrival = "The parents are dropping off their little monsters...", Cutscene_Return = "The parents are back! How did it go?",
+	Cutscene_Skip = "⏭ Skip", Cutscene_Complaint = "📄 COMPLAINT!\nMy baby is grumpy!",
+	-- results
+	Results_Title = "🌙 Shift complete!", Results_TutorialDone = "🎉 You're a real Monstergarten nanny now!", Results_MVP = "MVP: {1}",
+	Results_Again = "🔁 Play again", Results_Lobby = "🏠 To lobby",
+	-- tutorial
+	Tutorial_Offer = "New here? Learn the ropes in a quick tutorial!", Tutorial_Start = "📖 Tutorial", Tutorial_Skip = "Skip", Tutorial_Next = "Next ▶", Tutorial_Step = "Step {1}/{2}",
+	Tut_Move = "Walk around with WASD (or the joystick). Grab a tool from a rack with E!",
+	Tut_Bubble = "See the bubble over Dragling? It's hungry! Bubbles show what a baby needs.",
+	Tut_Cook = "Kitchen time: take Meat + Pepper, put them in the Oven, then take the Spicy Steak and Feed Dragling.",
+	Tut_Sleep = "Dragling is sleepy. Pick it up (E) and place it in a crib in the bedroom.",
+	Tut_Fire = "Oh no, FIRE! Grab an extinguisher and hold the mouse button to spray it.",
+	Tut_Tantrum = "When a need hits 0 a baby throws a TANTRUM and causes chaos. Dragling is cold - bring it to the fireplace!",
+	Tut_Parents = "At the end of the shift the parents come back and rate you with stars. Good luck!",
+	-- quests / daily
+	Quests_Title = "📜 Daily quests", Daily_Title = "🎁 Daily gift", Daily_Claim = "Claim!", Daily_Day = "Day {1}", Daily_Already = "You already claimed today's gift.",
+	Quest_PutOutFires = "Put out {1} fires", Quest_FeedBabies = "Feed babies {1} times", Quest_FindGhostie = "Find Ghostie {1} times",
+	Quest_ThreeStarDragling = "Get 3 stars with Dragling {1} times", Quest_CookDishes = "Cook {1} dishes", Quest_CleanMess = "Clean up {1} messes",
+	Quest_PlayShifts = "Play {1} shifts", Quest_Bedtime = "Put babies to bed {1} times", Quest_RepairFurniture = "Repair {1} pieces of furniture", Quest_EarnStars = "Earn {1} stars",
+	-- toasts
+	Toast_DaycareLevel = "🏠 Daycare level {1}!", Toast_NannyLevel = "🍼 Nanny level {1}!", Toast_NewTitle = "🎖 New title: {1}",
+	Toast_Unlocked_Baby = "🔓 Unlocked: {1}!", Toast_Unlocked_Tool = "🔓 New tool: {1}!", Toast_Unlocked_Difficulty = "🔓 New difficulty: {1}!",
+	Toast_Unlocked_Room = "🔓 New room: {1}!", Toast_Unlocked_Shop = "🔓 In the shop: {1}!", Toast_Unlocked_Cosmetic = "🔓 Unlocked: {1}!",
+	Toast_CoinsReward = "🪙 +{1} coins!", Toast_CosmeticReward = "🎁 New cosmetic: {1}!", Toast_QuestDone = "📜 Quest done: {1} (+{2} 🪙)",
+	Toast_Daily = "🎁 +{1} coins! Streak: {2} days", Toast_Bought = "🛍 Bought: {1}", Toast_Upgraded = "⬆️ {1} is now level {2}!",
+	Toast_PassBought = "👑 Thanks! {1} is active.", Toast_Adopted = "🐾 {1} is now your pet!", Toast_PowerOut = "⚡ Power is out! Fix it at the electric panel.",
+	Toast_BabyEscaped = "🏃 {1} escaped through the gate!", Toast_BabyReturned = "🏠 {1} is back inside!", Toast_GhostFound = "👻 {1} found Ghostie!",
+	Toast_HideAndSeek = "👻 Ghostie wants to play hide and seek! Find it with a flashlight.", Toast_EggHatched = "🐣 The egg hatched: {1}!",
+	Toast_AutoFeeder = "🤖 The auto feeder fed everyone!",
+	-- errors / info
+	Baby_DoesNotEat = "{1} doesn't eat food.", Station_Occupied = "Someone is already there.", Station_NotNeeded = "{1} doesn't need that.",
+	Ghost_NeedLight = "Shine a flashlight on Ghostie first!", Tool_Locked = "{1} is still locked.", Trash_BagFull = "The trash bag is full!", Hands_Full = "Your hands are full.",
+	Kitchen_NoPower = "No power! Fix the electric panel first.", Kitchen_NoRecipe = "{1} doesn't go in the {2}.", Feeder_Used = "The auto feeder was already used this shift.",
+	Pass_Required = "You need the Head Nanny pass for that.", Cosmetic_NotOwned = "You don't own that yet.",
+	Pet_NotFriends = "You need 5 friendship to adopt.", Pet_Already = "You already adopted this baby.", Pet_NameRejected = "That name isn't allowed.",
+	Shop_NoCoins = "Not enough coins.", Shop_Owned = "Owned", Shop_MaxLevel = "Already max level.", Shop_NeedLevel = "Needs daycare Lv {1}",
+	Debug_Done = "Debug: {1}",
+	-- events
+	Event_Success = "Event complete! +{1} 🪙", Event_Fail = "Event failed...",
+	Event_Storm = "Storm!", Event_Birthday = "Birthday!", Event_Inspector = "Inspector!", Event_MysteryEgg = "Mystery egg!", Event_FullMoon = "Full moon!", Event_MessRain = "Mess rain!", Event_Escape = "Escape!",
+	EventDesc_Storm = "The power will go out - restore it within 20 s.", EventDesc_Birthday = "{1} wants a cake (Flour + Milk + Berries in the oven)!",
+	EventDesc_Inspector = "Keep everything spotless while the inspector visits.", EventDesc_MysteryEgg = "Warm the egg by a fireplace for 20 s.",
+	EventDesc_FullMoon = "Chaos is twice as strong - but care counts 1.5×.", EventDesc_MessRain = "Trash fell from the vents - bin it for coins!",
+	EventDesc_Escape = "The gate is open and {1} wants out!",
+	-- prompts
+	Prompt_TakeTool = "Take", Prompt_ReturnTool = "Return", Prompt_PickUpItem = "Pick up", Prompt_PickUpBaby = "Pick up", Prompt_PlaceBaby = "Place",
+	Prompt_Feed = "Feed", Prompt_Play = "Play", Prompt_GiveToy = "Give toy", Prompt_Wash = "Wash", Prompt_Water = "Water", Prompt_Bandage = "Change bandages",
+	Prompt_CatchGhost = "Catch!", Prompt_TakeIngredient = "Take", Prompt_AddIngredient = "Add", Prompt_TakeDish = "Take", Prompt_AutoFeeder = "Feed everyone",
+	Prompt_CollectTrash = "Pick up", Prompt_EmptyTrash = "Throw away", Prompt_CutRoot = "Cut", Prompt_Repair = "Repair", Prompt_RestorePower = "Restore power",
+	Prompt_Curtains = "Curtains", Prompt_Gate = "Gate", Prompt_OpenShop = "Shop", Prompt_OpenWardrobe = "Wardrobe", Prompt_OpenPets = "Pets", Prompt_OpenDaily = "Daily gift",
+	-- items
+	Item_Extinguisher = "Extinguisher", Item_Mop = "Mop", Item_Flashlight = "Flashlight", Item_ToyBag = "Toy bag", Item_Lullaby = "Lullaby player", Item_Net = "Net",
+	Item_Hammer = "Hammer", Item_Shears = "Garden shears", Item_WateringCan = "Watering can", Item_Sponge = "Sponge", Item_BandageRoll = "Bandage roll", Item_TrashBag = "Trash bag",
+	Item_Meat = "Meat", Item_Pepper = "Pepper", Item_Milk = "Milk", Item_Fish = "Fish", Item_Beet = "Beet", Item_Berries = "Berries", Item_Rocks = "Rocks", Item_Flour = "Flour", Item_Ice = "Ice",
+	Item_SpicySteak = "Spicy steak", Item_BeetJuice = "Beet juice", Item_FishMash = "Fish mash", Item_RockCookies = "Rock cookies", Item_BerryIceCream = "Berry ice cream",
+	Item_Porridge = "Porridge", Item_Cake = "Cake", Item_Burnt = "Burnt food", Item_Trash = "Trash", Item_Egg = "Mystery egg",
+	Item_Bed = "Crib", Item_Bath = "Bath", Item_Fireplace = "Warm spot", Item_ChargingStation = "Charging station", Item_SunSpot = "Sunny spot", Item_ColdSpot = "Cold spot", Item_DarkZone = "Dark spot",
+	Item_Oven = "Oven", Item_Pot = "Pot", Item_Blender = "Blender", Item_Freezer = "Freezer", Item_Panel = "Electric panel", Item_Switch = "Curtain switch", Item_Gate = "Yard gate", Item_Bin = "Trash bin", Item_Roots = "Roots",
+	ToolDesc_Extinguisher = "Bigger spray, faster firefighting", ToolDesc_Mop = "Cleans a wider area", ToolDesc_Flashlight = "Wider, longer beam",
+	ToolDesc_Lullaby = "Bigger range, works without power", ToolDesc_Net = "Catches from further away", ToolDesc_Hammer = "Faster repairs",
+	ToolDesc_Shears = "Faster root cutting", ToolDesc_WateringCan = "More water per splash", ToolDesc_TrashBag = "Holds more trash",
+	-- rooms / upgrades
+	Room_Basement = "Basement", Room_Greenhouse = "Greenhouse corner", Room_IceMat = "Ice mat",
+	Upgrade_DoublePot = "Second pot", Upgrade_ExtraRacks = "Extra tool racks", Upgrade_SecondFireplace = "Second fireplace", Upgrade_AutoShutoff = "Auto shut-off",
+	Upgrade_MegaBlender = "Mega Blender", Upgrade_SecondOven = "Second oven", Upgrade_AutoFeeder = "Auto feeder", Upgrade_FireproofFurniture = "Fireproof furniture",
+	UpgradeDesc_DoublePot = "Cook two pots at once", UpgradeDesc_ExtraRacks = "More extinguishers and mops around", UpgradeDesc_SecondFireplace = "Another warm spot in the playroom",
+	UpgradeDesc_AutoShutoff = "Food never burns", UpgradeDesc_MegaBlender = "Blends twice as fast", UpgradeDesc_SecondOven = "Bake two dishes at once",
+	UpgradeDesc_AutoFeeder = "Once per shift: everyone +30 hunger", UpgradeDesc_FireproofFurniture = "Furniture burns much slower",
+	-- shop / wardrobe / pets
+	Shop_Title = "🛒 Shop", ShopTab_Tools = "🧰 Tools", ShopTab_Daycare = "🏠 Daycare", ShopTab_Cosmetics = "👗 Cosmetics", ShopTab_Robux = "💎 Robux",
+	Shop_Level = "Level {1}/{2}", Shop_Locked = "🔒 Locked", Shop_Max = "MAX", Shop_NoRobux = "Nothing here yet - check back soon!",
+	Pass_VIP = "VIP Nanny", Pass_HeadNanny = "Head Nanny", Pass_MusicBox = "Music Box", Pass_CoinPouch = "Coin Pouch",
+	PassDesc_VIP = "Golden name, VIP apron, +1 pet slot", PassDesc_HeadNanny = "Choose which babies come to your shift", PassDesc_MusicBox = "Pick the lobby music",
+	PassDesc_CoinPouch = "+50% coins from shifts", Product_CoinsSmall = "Handful of coins", Product_CoinsMedium = "Bag of coins", Product_CoinsLarge = "Chest of coins", ProductDesc_Coins = "Coins for upgrades and cosmetics",
+	Wardrobe_Title = "👗 Wardrobe", Wardrobe_None = "Nothing", Slot_Hat = "Hats", Slot_Apron = "Aprons", Slot_Uniform = "Uniforms", Slot_ToolSkin = "Tool skins", Slot_PetAccessory = "Pet bits", Slot_Sign = "Sign",
+	Pets_Title = "🐾 Pets", Pets_Slots = "Following you: {1}/{2}", Pets_Rename = "Rename", Pets_Equip = "Walk", Pets_Unequip = "Rest", Pets_Adopt = "🐾 Adopt!",
+	Pets_Empty = "Care for babies with 3 stars to become friends - at 5 hearts you can adopt them!",
+	Debug_Title = "🛠 Debug",
+}

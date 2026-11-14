@@ -67,12 +67,43 @@ function Strings.name(n: { en: string, lt: string }?): string
 	return (n :: any)[current] or n.en
 end
 
--- A server message is sent as { key, args } so each client localizes it.
+-- Localize an argument that is an id: a strings key, an item / room / upgrade / difficulty id,
+-- a baby id or a cosmetic id. Anything else is returned unchanged.
+local Babies = require(script.Parent.Config.Babies)
+local Cosmetics = require(script.Parent.Config.Cosmetics)
+function Strings.arg(v: any): any
+	if type(v) ~= "string" then
+		return v
+	end
+	if en[v] then
+		return Strings.t(v)
+	end
+	for _, prefix in { "Item_", "Room_", "Upgrade_", "Difficulty_", "Pass_" } do
+		if en[prefix .. v] then
+			return Strings.t(prefix .. v)
+		end
+	end
+	local b = Babies.Defs[v]
+	if b then
+		return Strings.name(b.Name)
+	end
+	local c = Cosmetics.Defs[v]
+	if c then
+		return Strings.name(c.Name)
+	end
+	return v
+end
+
+-- A server message is sent as { key, args } so each client localizes it (args are localized too).
 function Strings.msg(m: any): string
 	if type(m) == "string" then
 		return Strings.t(m)
 	elseif type(m) == "table" then
-		return Strings.t(m[1], table.unpack(m, 2))
+		local args = {}
+		for i = 2, #m do
+			args[i - 1] = Strings.arg(m[i])
+		end
+		return Strings.t(m[1], table.unpack(args))
 	end
 	return ""
 end

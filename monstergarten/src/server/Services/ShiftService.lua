@@ -444,6 +444,29 @@ function ShiftService:Start()
 	Players.PlayerRemoving:Connect(function(p)
 		ShiftService:LeaveShift(p)
 	end)
+	-- Drop whatever a nanny holds the moment they die (a carried baby must not fall with the body).
+	local function watchDeath(p: Player, char: Model)
+		local hum = char:WaitForChild("Humanoid", 10) :: Humanoid?
+		if hum then
+			hum.Died:Connect(function()
+				if playerSession[p] then
+					S.ToolService:ClearHeld(p)
+				end
+			end)
+		end
+	end
+	local function hookDeaths(p: Player)
+		p.CharacterAdded:Connect(function(char)
+			watchDeath(p, char)
+		end)
+		if p.Character then
+			task.spawn(watchDeath, p, p.Character)
+		end
+	end
+	Players.PlayerAdded:Connect(hookDeaths)
+	for _, p in Players:GetPlayers() do
+		hookDeaths(p)
+	end
 	Players.PlayerAdded:Connect(function(p)
 		p.CharacterAdded:Connect(function(char)
 			local session = playerSession[p]

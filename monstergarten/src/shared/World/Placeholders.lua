@@ -310,7 +310,9 @@ function Placeholders.parent(id: string, babyModel: Model?): Model
 			end
 		end
 	end
+	local offset = m:GetAttribute("FloorOffset") or 1.45
 	m:ScaleTo(6)
+	m:SetAttribute("FloorOffset", offset * 6)
 	return m
 end
 
