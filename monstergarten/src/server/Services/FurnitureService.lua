@@ -168,6 +168,26 @@ function FurnitureService:SetGate(session, open: boolean)
 	session:Sound("Env_DoorOpen", g.Inside)
 end
 
+-- Front entrance doors (arrival / pick-up scenes)
+function FurnitureService:SetEntrance(session, open: boolean)
+	for _, m in session:Tagged("EntranceDoor") do
+		if m:GetAttribute("Open") ~= open then
+			m:SetAttribute("Open", open)
+			local doors = m:FindFirstChild("Doors")
+			if doors then
+				for _, d in doors:GetChildren() do
+					local cf = d:GetAttribute(if open then "OpenCF" else "ClosedCF")
+					if typeof(cf) == "CFrame" and d:IsA("BasePart") then
+						TweenService:Create(d, TweenInfo.new(0.7, Enum.EasingStyle.Back), { CFrame = cf }):Play()
+						d.CanCollide = not open
+					end
+				end
+			end
+			session:Sound("Env_DoorOpen", (m :: Model):GetPivot().Position)
+		end
+	end
+end
+
 -- Session --------------------------------------------------------------------------------------
 
 function FurnitureService:SetupSession(session)

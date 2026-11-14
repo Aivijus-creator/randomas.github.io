@@ -65,6 +65,7 @@ function StatusEffectService:Apply(session, baby, name: string, duration: number
 		if not self:Has(baby, "Burning") then
 			BabyBase.changeAll(baby, -40) -- GDD: Sprout / Mummy lose 40 on all needs
 			session:Sound("Env_Fire", BabyBase.position(baby))
+			session:Notify({ "Toast_BabyBurning", baby.Id }, "bad")
 		end
 	elseif name == "Frozen" then
 		if self:Has(baby, "Burning") then
@@ -79,6 +80,9 @@ function StatusEffectService:Apply(session, baby, name: string, duration: number
 			baby.Path = nil
 		end
 		session:Sound("Env_Freeze", BabyBase.position(baby))
+		if not self:Has(baby, "Frozen") then
+			session:Notify({ "Toast_BabyFrozen", baby.Id }, "bad")
+		end
 	elseif name == "Wet" then
 		baby.Statuses.Burning = nil
 	end

@@ -14,6 +14,16 @@ local function label(part: BasePart, face: Enum.NormalId, text: string)
 	B.surfaceText(part, face, text, { TextColor3 = P.Plum })
 end
 
+-- Counter with a sink + tap.
+function K.sinkCounter(parent: Instance, cf: CFrame, width: number?): Model
+	local m = K.counter(parent, cf, width or 6, Color3.fromRGB(168, 230, 207))
+	m.Name = "SinkCounter"
+	B.disc(m, 2.2, 0.1, at(cf, 0, 3.86, -0.2).Position, Color3.fromRGB(170, 175, 185), M.Metal, { CanCollide = false })
+	B.column(m, 1.2, 0.25, at(cf, 0, 4.4, 1).Position, Color3.fromRGB(170, 175, 185), M.Metal, { CanCollide = false })
+	B.cyl(m, 1, 0.25, at(cf, 0, 5, 0.6) * CFrame.Angles(0, math.rad(90), 0), Color3.fromRGB(170, 175, 185), M.Metal, { CanCollide = false })
+	return m
+end
+
 function K.counter(parent: Instance, cf: CFrame, width: number?, color: Color3?): Model
 	local w = width or 6
 	local m = B.model(parent, "Counter")
@@ -154,6 +164,7 @@ end
 
 function K.hangingPans(parent: Instance, cf: CFrame)
 	local m = B.model(parent, "HangingPans")
+	B.tag(m, "CeilingDecor")
 	B.cyl(m, 8, 0.25, cf, P.Metal, M.Metal, { CanCollide = false })
 	for i = -3, 3, 2 do
 		B.deco(m, Vector3.new(0.08, 1, 0.08), cf * CFrame.new(i, -0.5, 0), P.Metal, M.Metal)

@@ -8,6 +8,7 @@ local Remotes = require(Shared.Net.Remotes)
 local GameSettings = require(Shared.Config.GameSettings)
 local Difficulty = require(Shared.Config.Difficulty)
 local ShiftSession = require(script.Parent.Parent.Classes.ShiftSession)
+local ArrivalScene = require(script.Parent.Parent.Classes.ArrivalScene)
 local ServerUtil = require(script.Parent.Parent.ServerUtil)
 
 local ShiftService = {}
@@ -239,7 +240,7 @@ function ShiftService:RunIntro(session)
 	else
 		list = self:PickBabies(session.Host, session.Difficulty, #session.Players, session.PreferredBabies)
 	end
-	S.BabyService:SpawnBabies(session, list, true)
+	S.BabyService:SpawnBabies(session, list, false)
 	self:SendState(session)
 	local cutscene = Remotes.event("Cutscene")
 	local babyInfo = {}
@@ -249,7 +250,20 @@ function ShiftService:RunIntro(session)
 	for _, p in session.Players do
 		cutscene:FireClient(p, "Arrival", { Slot = session.Slot, Babies = babyInfo })
 	end
-	self:WaitCutscene(session, GameSettings.CutsceneLength)
+	session.SkipVotes = {}
+	local done = false
+	task.spawn(function()
+		local ok, err = pcall(ArrivalScene.arrive, session, session.BabyList, S, function()
+			return self:AllSkipped(session)
+		end)
+		if not ok then
+			warn("[ShiftService] arrival scene failed:", err)
+		end
+		done = true
+	end)
+	self:WaitCutscene(session, 20, function()
+		return done
+	end)
 	if session.Phase == "Ended" then
 		return
 	end
@@ -262,18 +276,23 @@ function ShiftService:RunIntro(session)
 	self:SendState(session)
 end
 
-function ShiftService:WaitCutscene(session, duration: number)
-	session.SkipVotes = {}
+function ShiftService:AllSkipped(session): boolean
+	if #session.Players == 0 then
+		return true
+	end
+	for _, p in session.Players do
+		if not session.SkipVotes[p] then
+			return false
+		end
+	end
+	return true
+end
+
+-- Waits until `done()` returns true, everyone pressed Skip, or `duration` passed; then ends the cutscene.
+function ShiftService:WaitCutscene(session, duration: number, done: (() -> boolean)?)
 	local t0 = os.clock()
 	while os.clock() - t0 < duration and session.Phase ~= "Ended" do
-		local all = #session.Players > 0
-		for _, p in session.Players do
-			if not session.SkipVotes[p] then
-				all = false
-				break
-			end
-		end
-		if all then
+		if self:AllSkipped(session) or (done and done()) then
 			break
 		end
 		task.wait(0.1)
@@ -300,6 +319,19 @@ function ShiftService:Finish(session)
 	for _, p in session.Players do
 		Remotes.event("Cutscene"):FireClient(p, "Return", { Slot = session.Slot, Babies = babyInfo, Stars = results.Stars })
 	end
+	session.SkipVotes = {}
+	local faces = {}
+	for _, b in results.Babies do
+		faces[b.Uid] = b.Score
+	end
+	task.spawn(function()
+		local ok, err = pcall(ArrivalScene.depart, session, S, function()
+			return self:AllSkipped(session)
+		end, faces)
+		if not ok then
+			warn("[ShiftService] pick-up scene failed:", err)
+		end
+	end)
 	self:WaitCutscene(session, GameSettings.CutsceneLength)
 	if session.Phase == "Ended" then
 		return

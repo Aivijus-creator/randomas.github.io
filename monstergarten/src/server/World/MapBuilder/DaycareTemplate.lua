@@ -19,6 +19,89 @@ local BASE_Y = -16
 
 local Template = {}
 
+-- Exterior: siding skin with brick base and trim on every outer wall, pitched roofs, chimney.
+local SIDING = Color3.fromRGB(255, 226, 196)
+local BRICK = Color3.fromRGB(196, 128, 112)
+local TRIM = Color3.fromRGB(255, 250, 240)
+local ROOF = Color3.fromRGB(176, 104, 132)
+local ROOF_DARK = Color3.fromRGB(140, 80, 108)
+
+local function buildExterior(ctx)
+	local ext = B.folder(ctx.Model, "Exterior")
+	local V = Vector2.new
+	-- { a, b, outward normal, window/door openings, door-only openings (for the brick base) }
+	local walls = {
+		{ V(-83, -25), V(83, -25), V(0, -1), {
+			{ at = 20, width = 8, bottom = 4, height = 10 }, { at = 50, width = 6, bottom = 4, height = 10 }, { at = 70, width = 8, height = 9 },
+			{ at = 90, width = 6, bottom = 4, height = 10 }, { at = 112, width = 6, bottom = 4, height = 10 }, { at = 124, width = 6, height = 9 },
+			{ at = 153, width = 4, bottom = 7, height = 11 } }, { { at = 70, width = 8, height = 9 }, { at = 124, width = 6, height = 9 } } },
+		{ V(-83, -25), V(-83, 9), V(-1, 0), { { at = 17, width = 6, bottom = 4, height = 10 } }, {} },
+		{ V(-83, 9), V(-43, 9), V(0, 1), { { at = 12, width = 6, bottom = 4, height = 10 }, { at = 28, width = 6, bottom = 4, height = 10 } }, {} },
+		{ V(-43, 9), V(-43, 25), V(-1, 0), { { at = 8, width = 5, bottom = 4, height = 10 } }, {} },
+		{ V(-43, 25), V(-33, 25), V(0, 1), {}, {} },
+		{ V(7, 25), V(17, 25), V(0, 1), {}, {} },
+		{ V(17, 9), V(17, 25), V(1, 0), { { at = 8, width = 5, bottom = 4, height = 10 } }, {} },
+		{ V(17, 9), V(57, 9), V(0, 1), { { at = 20, width = 6, bottom = 4, height = 10 } }, {} },
+		{ V(57, 9), V(83, 9), V(0, 1), {}, {} },
+		{ V(83, -25), V(83, 9), V(1, 0), { { at = 10, width = 4, bottom = 7, height = 11 } }, {} },
+		{ V(-33, 25), V(-33, 29), V(-1, 0), {}, {} },
+		{ V(-33, 45), V(-33, 49), V(-1, 0), {}, {} },
+		{ V(7, 25), V(7, 49), V(1, 0), { { at = 12, width = 6, bottom = 4, height = 10 } }, {} },
+		{ V(-33, 49), V(7, 49), V(0, 1), { { at = 10, width = 8, height = 9 }, { at = 30, width = 7, bottom = 3, height = 8 } }, { { at = 10, width = 8, height = 9 }, { at = 30, width = 7, bottom = 3, height = 8 } } },
+		{ V(-63, 29), V(-43, 29), V(0, -1), {}, {} },
+		{ V(-63, 45), V(-43, 45), V(0, 1), {}, {} },
+		{ V(-63, 29), V(-63, 45), V(-1, 0), {}, {} },
+	}
+	for _, w in walls do
+		local a, b, n = w[1], w[2], w[3]
+		local function off(d)
+			return a + n * d, b + n * d
+		end
+		local a1, b1 = off(0.6)
+		B.wall(ext, a1, b1, 0, WALL_H + 0.2, 0.2, SIDING, M.WoodPlanks, w[4])
+		local a2, b2 = off(0.75)
+		B.wall(ext, a2, b2, 0, 2.6, 0.12, BRICK, M.Brick, w[5])
+		B.wall(ext, a2, b2, WALL_H - 0.4, 0.8, 0.14, TRIM, M.SmoothPlastic, {})
+	end
+	-- Pitched roofs. ridgeAlongX: slopes run along Z; otherwise along X.
+	local function roof(x0, x1, z0, z1, ridgeAlongX, rise, color)
+		local y0 = WALL_H + 1
+		local cx, cz = (x0 + x1) / 2, (z0 + z1) / 2
+		local parts = {}
+		if ridgeAlongX then
+			local half = (z1 - z0) / 2
+			table.insert(parts, B.wedge(ext, Vector3.new(x1 - x0, rise, half), CFrame.new(cx, y0 + rise / 2, z0 + half / 2), color, M.Slate))
+			table.insert(parts, B.wedge(ext, Vector3.new(x1 - x0, rise, half), CFrame.new(cx, y0 + rise / 2, z1 - half / 2) * CFrame.Angles(0, math.pi, 0), color, M.Slate))
+			B.part(ext, Vector3.new(x1 - x0 + 0.6, 0.6, 0.9), CFrame.new(cx, y0 + rise + 0.1, cz), ROOF_DARK, M.Slate, { CanCollide = false })
+		else
+			local half = (x1 - x0) / 2
+			table.insert(parts, B.wedge(ext, Vector3.new(z1 - z0, rise, half), CFrame.new(x0 + half / 2, y0 + rise / 2, cz) * CFrame.Angles(0, math.rad(90), 0), color, M.Slate))
+			table.insert(parts, B.wedge(ext, Vector3.new(z1 - z0, rise, half), CFrame.new(x1 - half / 2, y0 + rise / 2, cz) * CFrame.Angles(0, math.rad(-90), 0), color, M.Slate))
+			B.part(ext, Vector3.new(0.9, 0.6, z1 - z0 + 0.6), CFrame.new(cx, y0 + rise + 0.1, cz), ROOF_DARK, M.Slate, { CanCollide = false })
+		end
+		-- eaves board all around
+		B.part(ext, Vector3.new(x1 - x0 + 0.4, 0.5, z1 - z0 + 0.4), CFrame.new(cx, y0 - 0.25, cz), TRIM, M.SmoothPlastic, { CanCollide = false })
+		for _, p in parts do
+			p.CanCollide = false
+		end
+	end
+	roof(-85, 85, -27.5, 11.5, true, 10, ROOF) -- main row of rooms
+	roof(-44.5, 18.5, 10.5, 26.5, false, 8, ROOF) -- playroom bump
+	roof(-34.5, 8.5, 26, 50.5, false, 8, ROOF) -- hall
+	roof(-64.5, -32.5, 28, 46, true, 6, ROOF_DARK) -- stair house
+	-- chimney above the playroom fireplace
+	B.part(ext, Vector3.new(4, 14, 4), CFrame.new(-41, WALL_H + 7, 13), BRICK, M.Brick, { CanCollide = false })
+	B.part(ext, Vector3.new(4.8, 0.8, 4.8), CFrame.new(-41, WALL_H + 14.2, 13), ROOF_DARK, M.Slate, { CanCollide = false })
+	-- little dormer sign on the front roof
+	for _, d in ext:GetDescendants() do
+		if d:IsA("BasePart") then
+			d.CanCollide = false
+			B.tag(d, "Roof")
+		end
+	end
+	-- the roof/skins should not hide the yard sign etc. for pathfinding: make skins non-collidable too
+end
+
 -- CFrame at floor position (x, y, z) whose front (LookVector) points along (dx, dz).
 local function cfAt(x: number, y: number, z: number, dx: number?, dz: number?): CFrame
 	local pos = Vector3.new(x, y, z)
@@ -35,6 +118,7 @@ local function buildStructure(ctx)
 	end
 	grass(-110, -130, 110, 12) -- north of the basement band (includes yard + street)
 	grass(-110, 12, -83, 80)
+	grass(-150, 80, 150, 150) -- front yard + street area
 	grass(-33, 12, 110, 80)
 	grass(-43, 12, -33, 29)
 	grass(-43, 45, -33, 80)
@@ -203,6 +287,7 @@ local function buildStructure(ctx)
 	B.roomVolume(rv, "Basement", -83, 12, -43, 52, BASE_Y, -BASE_Y)
 	B.roomVolume(rv, "Yard", -45, -85, 45, -25, 0, 30)
 	B.roomVolume(rv, "Outside", -110, -130, 110, -85, -5, 40)
+	B.roomVolume(rv, "Front", -110, 49.5, 110, 150, -5, 40)
 end
 
 function Template.build(parent: Instance?): Model
@@ -226,7 +311,16 @@ function Template.build(parent: Instance?): Model
 	}
 	B.folder(model, "Dynamic")
 	buildStructure(ctx)
-	for _, name in { "Kitchen", "Playroom", "Bedroom", "Bathroom", "Hall", "Yard", "Basement" } do
+	buildExterior(ctx)
+	local scenery = B.model(model, "Scenery")
+	O.forest(scenery, -145, -128, 145, 145, Vector3.new(0, 0, -10), 150, {
+		{ -92, -30, 92, 56 }, -- the building
+		{ -50, -90, 50, -20 }, -- yard
+		{ -150, -110, 150, -88 }, -- back street
+		{ -70, 44, 30, 96 }, -- front yard + porch
+		{ -150, 84, 150, 110 }, -- front street + sidewalk
+	}, 14, 77)
+	for _, name in { "Kitchen", "Playroom", "Bedroom", "Bathroom", "Hall", "Yard", "Basement", "Front" } do
 		local mod = RoomsFolder:FindFirstChild(name)
 		if mod then
 			local ok, err = pcall(function()

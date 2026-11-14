@@ -70,8 +70,7 @@ local function render()
 			local def = Difficulty.Defs[id]
 			local unlocked = level >= def.UnlockLevel or (d and d.DebugUnlockAll)
 			b.BackgroundColor3 = if q.Difficulty == id then C.Yellow elseif unlocked then def.Color else Color3.fromRGB(180, 180, 180)
-			b.Text = Strings.t("Difficulty_" .. id) .. (if unlocked then "" else " 🔒")
-			b.Active = isHost and unlocked
+			b.Text = Strings.t("Difficulty_" .. id) .. (if unlocked then "" else (" 🔒" .. def.UnlockLevel))
 			b.AutoButtonColor = false
 		end
 	end
@@ -116,9 +115,25 @@ function QueueController:Init()
 	UI.list(diffRow, 8, true, Enum.HorizontalAlignment.Center)
 	for i, id in Difficulty.Order do
 		local b = UI.button(id, Difficulty.Defs[id].Color, function()
-			if current and current.Host == player.UserId then
-				Remotes.event("QueueAction"):FireServer("Difficulty", id)
+			if not current then
+				return
 			end
+			local hud = State.Controllers.HUDController
+			if current.Host ~= player.UserId then
+				if hud then
+					hud:Toast("Queue_OnlyHost", "error")
+				end
+				return
+			end
+			local d = State.Data
+			local def = Difficulty.Defs[id]
+			if d and P.daycareLevel(d.TotalStars) < def.UnlockLevel and not d.DebugUnlockAll then
+				if hud then
+					hud:Toast({ "Queue_LockedLevel", "Difficulty_" .. id, def.UnlockLevel }, "error")
+				end
+				return
+			end
+			Remotes.event("QueueAction"):FireServer("Difficulty", id)
 		end, { Size = UDim2.fromOffset(160, 44), LayoutOrder = i, Parent = diffRow })
 		b.Name = id
 	end

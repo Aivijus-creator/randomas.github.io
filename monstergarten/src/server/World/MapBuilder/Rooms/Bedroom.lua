@@ -5,7 +5,7 @@ return function(ctx)
 	local blankets = { P.Lavender, P.Mint, P.Pink, P.Peach, P.Yellow, P.Blue, P.Cream, P.Pumpkin }
 
 	local n = 0
-	for _, x in { 22, 30, 52 } do
+	for _, x in { 24, 32, 52 } do
 		n += 1
 		F.crib(R, cfAt(x, 0.2, -19.5, 0, 1), blankets[n])
 		F.mobile(R, Vector3.new(x, 11, -19.5))
@@ -18,7 +18,7 @@ return function(ctx)
 	F.rug(R, cfAt(37, 0.2, -8), Vector2.new(30, 6), P.Lavender, nil)
 	-- Night lamps
 	F.floorLamp(R, cfAt(19, 0.2, -23), P.Lavender)
-	F.floorLamp(R, cfAt(55, 0.2, -23), P.Lavender)
+	F.floorLamp(R, cfAt(55, 0.2, -23.2), P.Lavender)
 	F.floorLamp(R, cfAt(55, 0.2, 7.5), P.Mint)
 	-- Curtain switch by the playroom door + curtains on windows
 	F.curtainSwitch(R, cfAt(17.8, 0.2, -2.5, 1, 0))
@@ -51,16 +51,20 @@ return function(ctx)
 			pos = Vector3.new(r:NextNumber(18, 56), 14.4, r:NextNumber(-24, 8))
 		end
 		local s = r:NextNumber(0.2, 0.45)
-		B.deco(stars, Vector3.new(s, s, s), CFrame.new(pos) * CFrame.Angles(0, 0, math.rad(45)), Color3.fromRGB(255, 245, 190), Enum.Material.Neon)
+		local star = B.deco(stars, Vector3.new(s, s, s), CFrame.new(pos) * CFrame.Angles(0, 0, math.rad(45)), Color3.fromRGB(255, 245, 190), Enum.Material.Neon)
+		if side == 4 then
+			B.tag(star, "CeilingDecor")
+		end
 	end
 	B.ball(stars, 2, Vector3.new(50, 12, -24.2), Color3.fromRGB(255, 240, 200), Enum.Material.Neon, { CanCollide = false })
 	-- Lullaby rack
-	local lr = F.toolRack(R, cfAt(37, 0.2, -23.6, 0, 1), "Bedroom")
+	local lr = F.toolRack(R, cfAt(46.5, 0.2, -23.6, 0, 1), "Bedroom")
 	lr:SetAttribute("ToolId", "Lullaby")
 	local mop = F.toolRack(R, cfAt(55.6, 0.2, -12, -1, 0), "Bedroom")
 	mop:SetAttribute("ToolId", "Mop")
 	mop:SetAttribute("RequiresUnlock", "Upgrade:ExtraRacks")
-	F.shelf(R, cfAt(19, 0.2, -10, 1, 0), 4, P.Lavender, Random.new(13))
+	F.changingTable(R, cfAt(19.1, 0.2, -21, 1, 0))
+	F.armchair(R, cfAt(54.6, 0.2, -18.5, -1, 0), P.Lavender)
 	-- Soft lights
 	F.ceilingLamp(R, Vector3.new(27, 13, -8), P.Lavender, 22)
 	F.ceilingLamp(R, Vector3.new(47, 13, -8), P.Lavender, 22)

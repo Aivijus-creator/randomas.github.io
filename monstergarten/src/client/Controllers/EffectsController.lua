@@ -192,6 +192,41 @@ handlers.Steam = handlers.Fizz
 handlers.Tantrum = function(d)
 	textPop(d.Position + Vector3.new(0, 3, 0), "💢", Color3.fromRGB(255, 80, 80), 2.5)
 end
+handlers.ChaosWarn = function(d)
+	local model
+	for _, m in CollectionService:GetTagged("Baby") do
+		if m:GetAttribute("Uid") == d.Uid then
+			model = m
+		end
+	end
+	local root = model and model.PrimaryPart
+	if not root or model:GetAttribute("LocallyVisible") == false then
+		return
+	end
+	local bb = Instance.new("BillboardGui")
+	bb.Size = UDim2.fromOffset(70, 70)
+	bb.StudsOffset = Vector3.new(0, 4.4, 0)
+	bb.AlwaysOnTop = true
+	bb.Adornee = root
+	bb.LightInfluence = 0
+	bb.Parent = player:WaitForChild("PlayerGui")
+	local f = Instance.new("TextLabel")
+	f.Size = UDim2.fromScale(1, 1)
+	f.BackgroundColor3 = Color3.fromRGB(255, 120, 120)
+	f.TextScaled = true
+	f.Font = Enum.Font.FredokaOne
+	f.Text = "❗" .. (d.Emoji or "")
+	f.Parent = bb
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(1, 0)
+	corner.Parent = f
+	local scale = Instance.new("UIScale")
+	scale.Scale = 0.3
+	scale.Parent = f
+	TweenService:Create(scale, TweenInfo.new(d.Time or 1.5, Enum.EasingStyle.Linear), { Scale = 1.15 }):Play()
+	Debris:AddItem(bb, (d.Time or 1.5) + 0.2)
+	ring(root.Position - Vector3.new(0, 1.2, 0), 4, Color3.fromRGB(255, 110, 110), d.Time or 1.5)
+end
 handlers.GhostVanish = function(_d) end
 handlers.InspectorNote = function(d)
 	textPop(d.Position, "📝❗", Color3.fromRGB(255, 120, 120), 2)

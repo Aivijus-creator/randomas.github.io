@@ -587,11 +587,15 @@ function BabyService:PrepareReturn(session)
 		self:SetHidden(session, b, false)
 		BabyBase.setState(b, "Leaving")
 	end
+	-- babies that ran outside are brought back to the hall so they can walk out to their parents
 	local spawns = session:Tagged("BabySpawn")
 	for i, b in session.BabyList do
-		local m = spawns[((i - 1) % math.max(1, #spawns)) + 1] :: BasePart?
-		if m then
-			BabyBase.placeAt(b, m.CFrame)
+		local room = session:RoomAt(b.Pos + Vector3.new(0, 2, 0))
+		if room == "Outside" or room == "Yard" or room == "Basement" or room == "Stairs" or room == nil then
+			local m = spawns[((i - 1) % math.max(1, #spawns)) + 1] :: BasePart?
+			if m then
+				BabyBase.placeAt(b, m.CFrame)
+			end
 		end
 	end
 end
@@ -610,6 +614,13 @@ local function animFor(baby): string
 	end
 	if baby.State == "Asleep" then
 		return "Sleep"
+	end
+	-- danger! (the nanny should help right now)
+	if BabyBase.hasStatus(baby, "Burning") or baby.State == "Escaping" then
+		return "Panic"
+	end
+	if BabyBase.hasStatus(baby, "Scared") then
+		return "Shiver"
 	end
 	if baby.Tantrum then
 		return "Tantrum"

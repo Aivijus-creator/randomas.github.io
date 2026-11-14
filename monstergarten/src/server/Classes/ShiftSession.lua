@@ -175,7 +175,7 @@ end
 
 function ShiftSession:IsIndoor(pos: Vector3): boolean
 	local r = self:RoomAt(pos)
-	return r ~= nil and r ~= "Yard" and r ~= "Outside"
+	return r ~= nil and r ~= "Yard" and r ~= "Outside" and r ~= "Front"
 end
 
 -- Is the daycare playing (needs decay, chaos runs)?

@@ -312,4 +312,120 @@ function O.dropoffWindow(parent: Instance, cf: CFrame): Model
 	return m
 end
 
+function O.picnicTable(parent: Instance, cf: CFrame): Model
+	local m = B.model(parent, "PicnicTable")
+	B.root(m, cf * CFrame.new(0, 1.5, 0))
+	B.part(m, Vector3.new(7, 0.35, 3), at(cf, 0, 2.8, 0), P.Wood, M.WoodPlanks)
+	for _, sz in { -2.4, 2.4 } do
+		B.part(m, Vector3.new(7, 0.3, 1.2), at(cf, 0, 1.6, sz), P.Wood, M.WoodPlanks)
+	end
+	for _, sx in { -2.8, 2.8 } do
+		B.part(m, Vector3.new(0.4, 2.8, 0.4), at(cf, sx, 1.4, 0), P.DarkWood, M.Wood, { CanCollide = false })
+		B.part(m, Vector3.new(0.4, 0.4, 5.8), at(cf, sx, 0.4, 0), P.DarkWood, M.Wood, { CanCollide = false })
+	end
+	B.part(m, Vector3.new(7.2, 0.05, 3.2), at(cf, 0, 3, 0), P.Pink, M.Fabric, { CanCollide = false })
+	return m
+end
+
+function O.playhouse(parent: Instance, cf: CFrame): Model
+	local m = B.model(parent, "Playhouse")
+	B.root(m, cf * CFrame.new(0, 3, 0))
+	B.part(m, Vector3.new(7, 5, 0.4), at(cf, 0, 2.5, 3), P.Peach, M.WoodPlanks)
+	B.part(m, Vector3.new(0.4, 5, 6), at(cf, -3.5, 2.5, 0), P.Peach, M.WoodPlanks)
+	B.part(m, Vector3.new(0.4, 5, 6), at(cf, 3.5, 2.5, 0), P.Peach, M.WoodPlanks)
+	B.part(m, Vector3.new(2.6, 5, 0.4), at(cf, -2.2, 2.5, -3), P.Peach, M.WoodPlanks)
+	B.part(m, Vector3.new(2.6, 5, 0.4), at(cf, 2.2, 2.5, -3), P.Peach, M.WoodPlanks)
+	B.wedge(m, Vector3.new(7.6, 2.5, 3.4), at(cf, 0, 6.25, -1.6), P.Pink, M.Slate, { CanCollide = false })
+	B.wedge(m, Vector3.new(7.6, 2.5, 3.4), at(cf, 0, 6.25, 1.6) * CFrame.Angles(0, math.pi, 0), P.Pink, M.Slate, { CanCollide = false })
+	B.deco(m, Vector3.new(1.6, 1.4, 0.1), at(cf, 2.2, 3.4, -3.25), Color3.fromRGB(200, 230, 255), M.Glass)
+	B.part(m, Vector3.new(7, 0.3, 6), at(cf, 0, 0.15, 0), P.Wood, M.WoodPlanks, { CanCollide = false })
+	return m
+end
+
+function O.hopscotch(parent: Instance, cf: CFrame)
+	local m = B.model(parent, "Hopscotch")
+	local colors = { P.Pink, P.Yellow, P.Mint, P.Lavender, P.Peach }
+	local layout = { { 0, 0 }, { 0, 1 }, { -0.55, 2 }, { 0.55, 2 }, { 0, 3 }, { -0.55, 4 }, { 0.55, 4 }, { 0, 5 } }
+	for i, c in layout do
+		B.deco(m, Vector3.new(2, 0.06, 2), at(cf, c[1] * 2.2, 0.08, -c[2] * 2.2), colors[(i - 1) % #colors + 1], M.SmoothPlastic)
+	end
+	return m
+end
+
+-- Pine tree: stacked cones made of tapered cylinders.
+function O.pine(parent: Instance, cf: CFrame, scale: number?, color: Color3?): Model
+	local s = scale or 1
+	local m = B.model(parent, "Pine")
+	B.root(m, cf * CFrame.new(0, 3 * s, 0))
+	B.column(m, 3 * s, 1 * s, at(cf, 0, 1.5 * s, 0).Position, Color3.fromRGB(120, 85, 60), M.Wood)
+	local c = color or Color3.fromRGB(80, 150, 110)
+	for i = 0, 3 do
+		local w = (7 - i * 1.5) * s
+		B.wedge(m, Vector3.new(w, 3 * s, w / 2), at(cf, 0, (3 + i * 2.2 + 1.5) * s, -w / 4), c:Lerp(Color3.fromRGB(140, 200, 150), i * 0.08), M.Grass)
+		B.wedge(m, Vector3.new(w, 3 * s, w / 2), at(cf, 0, (3 + i * 2.2 + 1.5) * s, w / 4) * CFrame.Angles(0, math.pi, 0), c:Lerp(Color3.fromRGB(140, 200, 150), i * 0.08), M.Grass)
+	end
+	return m
+end
+
+-- Birch: thin white trunk with soft pastel leaves.
+function O.birch(parent: Instance, cf: CFrame, scale: number?, color: Color3?): Model
+	local s = scale or 1
+	local m = B.model(parent, "Birch")
+	B.root(m, cf * CFrame.new(0, 4 * s, 0))
+	B.column(m, 10 * s, 0.9 * s, at(cf, 0, 5 * s, 0).Position, Color3.fromRGB(240, 238, 230), M.Wood)
+	for i = 1, 3 do
+		B.deco(m, Vector3.new(0.95 * s, 0.25 * s, 0.95 * s), at(cf, 0, (2 + i * 2.4) * s, 0), Color3.fromRGB(60, 55, 55), M.Wood)
+	end
+	local leaf = color or Color3.fromRGB(190, 225, 140)
+	B.ball(m, 5 * s, at(cf, 0, 11 * s, 0).Position, leaf, M.Grass)
+	B.ball(m, 3.6 * s, at(cf, 1.6 * s, 9.6 * s, 0.6 * s).Position, leaf:Lerp(Color3.fromRGB(255, 220, 150), 0.25), M.Grass)
+	return m
+end
+
+-- Fill an area with mixed trees: bigger towards the edge of the map, smaller towards `center`.
+-- keepOut = list of {x0, z0, x1, z1} rectangles that must stay free (paths, buildings, yards).
+function O.forest(parent: Instance, x0: number, z0: number, x1: number, z1: number, center: Vector3, maxDist: number, keepOut: { { number } }, spacing: number, seed: number)
+	local folder = B.folder(parent, "Trees")
+	local r = Random.new(seed)
+	local leafColors = {
+		Color3.fromRGB(120, 190, 120), Color3.fromRGB(150, 200, 120), Color3.fromRGB(200, 170, 220),
+		Color3.fromRGB(255, 180, 130), Color3.fromRGB(255, 200, 210), Color3.fromRGB(110, 170, 140),
+	}
+	local function blocked(x: number, z: number, pad: number): boolean
+		for _, k in keepOut do
+			if x > k[1] - pad and x < k[3] + pad and z > k[2] - pad and z < k[4] + pad then
+				return true
+			end
+		end
+		return false
+	end
+	local count = 0
+	local x = x0
+	while x <= x1 do
+		local z = z0
+		while z <= z1 do
+			local px = x + r:NextNumber(-spacing * 0.4, spacing * 0.4)
+			local pz = z + r:NextNumber(-spacing * 0.4, spacing * 0.4)
+			local d = (Vector3.new(px, 0, pz) - Vector3.new(center.X, 0, center.Z)).Magnitude
+			local t = math.clamp(d / maxDist, 0, 1)
+			local scale = 0.55 + t * t * 1.5 + r:NextNumber(-0.1, 0.15)
+			if not blocked(px, pz, 4 * scale) and r:NextNumber() < 0.35 + t * 0.55 then
+				local kind = r:NextInteger(1, 10)
+				local cf = CFrame.new(px, 0, pz) * CFrame.Angles(0, r:NextNumber(0, math.pi * 2), 0)
+				if kind <= 4 then
+					O.tree(folder, cf, scale, leafColors[r:NextInteger(1, #leafColors)])
+				elseif kind <= 7 then
+					O.pine(folder, cf, scale * 0.9)
+				else
+					O.birch(folder, cf, scale * 0.85, leafColors[r:NextInteger(1, #leafColors)])
+				end
+				count += 1
+			end
+			z += spacing
+		end
+		x += spacing
+	end
+	return folder, count
+end
+
 return O

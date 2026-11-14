@@ -22,19 +22,19 @@ return function(ctx)
 	F.window(R, CFrame.new(7, 7, 37) * CFrame.Angles(0, math.rad(90), 0), 6, 6, P.Peach)
 	-- Big clock + shift board on the north wall (front faces +Z)
 	F.wallClock(R, CFrame.new(-25, 10, 25.6) * CFrame.Angles(0, math.pi, 0), 5)
-	F.shiftBoard(R, CFrame.new(-1, 8, 25.7) * CFrame.Angles(0, math.pi, 0))
+	F.shiftBoard(R, CFrame.new(1, 8, 25.7) * CFrame.Angles(0, math.pi, 0))
 	-- Coat rack, shoe rack, plants, bench
 	F.coatRack(R, CFrame.new(-16, 0, 48.3) * CFrame.Angles(0, 0, 0))
 	F.shoeRack(R, cfAt(-30, 0.2, 47.6, 0, -1))
-	F.plant(R, cfAt(-31.5, 0.2, 40.5), P.Pumpkin, 1)
+	F.plant(R, cfAt(-31.5, 0.2, 42.2), P.Pumpkin, 0.9)
 	F.plant(R, cfAt(5.5, 0.2, 38), P.Lavender, 0.9)
 	O.bench(R, cfAt(-8, 0.2, 47.2, 0, -1), P.Mint)
 	F.rug(R, cfAt(-13, 0.2, 37), Vector2.new(14, 9), P.Peach, "round")
 	F.trashBin(R, cfAt(1.5, 0.2, 27, 0, 1))
 	-- Heater (warmth station)
-	F.heater(R, cfAt(-29, 0.2, 26.4, 0, 1))
+	F.heater(R, cfAt(-30, 0.2, 26.4, 0, 1))
 	-- Electric panel used while the basement is still locked
-	local panel = F.electricPanel(R, cfAt(-26.5, 0.2, 26.4, 0, 1))
+	local panel = F.electricPanel(R, cfAt(-25.4, 0.2, 26.4, 0, 1))
 	panel.Name = "HallElectricPanel"
 	panel:SetAttribute("RemoveIfUnlocked", "Room:Basement")
 	-- Spawns

@@ -5,7 +5,7 @@ return {
 	ClockStart = 7,
 	ClockEnd = 19,
 	ParentsWarningAt = 450,
-	CutsceneLength = 7,
+	CutsceneLength = 10,
 	MaxSessions = 4,
 	MaxPlayersPerShift = 6,
 	QueueCountdown = 15,

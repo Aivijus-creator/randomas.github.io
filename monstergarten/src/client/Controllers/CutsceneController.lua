@@ -48,16 +48,16 @@ local function windowOf(m: Model): Model?
 	return nil
 end
 
-local function spawnParents(window: Model, babies: { any }, faces: boolean)
+local function spawnParents(window: Model, babies: { any }, faces: boolean, facesOnly: boolean?)
 	local spot = window:FindFirstChild("ParentSpot") :: BasePart?
-	if not spot then
+	if not spot and not facesOnly then
 		return
 	end
 	local n = math.min(#babies, 4)
 	local seen = {}
 	local i = 0
 	for _, b in babies do
-		if not seen[b.Id] and i < n then
+		if not facesOnly and not seen[b.Id] and i < n then
 			seen[b.Id] = true
 			i += 1
 			local ok, parent = pcall(ModelRegistry.getParent, b.Id)
@@ -104,6 +104,19 @@ local function spawnParents(window: Model, babies: { any }, faces: boolean)
 	end
 end
 
+local function celebrate()
+	for i = 1, 3 do
+		local star = UI.label("⭐", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.3 + i * 0.1, 1.1), Size = UDim2.fromOffset(90, 90), Parent = gui })
+		TweenService:Create(star, TweenInfo.new(1.2 + i * 0.2, Enum.EasingStyle.Back), { Position = UDim2.fromScale(0.3 + i * 0.1, 0.35), Rotation = 360 }):Play()
+		table.insert(props, star)
+	end
+	local yay = UI.label("", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.2), Size = UDim2.fromOffset(600, 80), TextColor3 = C.Yellow, TextStrokeTransparency = 0.2, Parent = gui })
+	UI.bind(yay, "Cutscene_Happy")
+	local scale = UI.new("UIScale", { Scale = 0.2, Parent = yay })
+	TweenService:Create(scale, TweenInfo.new(0.6, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+	table.insert(props, yay)
+end
+
 local function complaint()
 	local paper = UI.panel({ AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, -0.2, 0), Size = UDim2.fromOffset(260, 180), Rotation = -12, Parent = gui }, C.White)
 	local l = UI.label("", { Position = UDim2.fromOffset(10, 10), Size = UDim2.new(1, -20, 1, -20), TextColor3 = C.Red, Parent = paper })
@@ -118,28 +131,41 @@ end
 function CutsceneController:Play(kind: string, data: any)
 	clearProps()
 	local m = daycare(data.Slot)
-	local window = m and windowOf(m)
-	if not window then
+	if not m then
 		return
 	end
 	self.Active = true
 	Controllers.CameraController.Locked = true
 	local cam = workspace.CurrentCamera
-	local camPoint = window:FindFirstChild("CameraPoint") :: BasePart?
-	local target = window:GetPivot().Position
-	local startCF = (camPoint and camPoint.CFrame or window:GetPivot() * CFrame.new(0, 2, -14))
+	-- The parents and babies are moved by the server; the camera watches the front porch.
+	local camMarker = nil
+	for _, c in CollectionService:GetTagged("FrontCamera") do
+		if c:IsDescendantOf(m) then
+			camMarker = c
+		end
+	end
+	local window = windowOf(m)
+	local camCF = if camMarker then (camMarker :: BasePart).CFrame else (window and window:GetPivot() * CFrame.new(0, 8, 30) or m:GetPivot())
 	cam.CameraType = Enum.CameraType.Scriptable
-	local from = CFrame.lookAt(startCF.Position + Vector3.new(0, 14, -10), target)
-	local to = CFrame.lookAt(startCF.Position, target + Vector3.new(0, 4, 0))
-	cam.CFrame = from
-	TweenService:Create(cam, TweenInfo.new(2.2, Enum.EasingStyle.Sine), { CFrame = to }):Play()
-	spawnParents(window, data.Babies or {}, kind == "Return")
+	cam.CFrame = camCF * CFrame.new(-18, 6, 10)
+	TweenService:Create(cam, TweenInfo.new(4, Enum.EasingStyle.Sine), { CFrame = camCF }):Play()
+	if kind == "Return" then
+		-- face ratings above every baby
+		spawnParents(window or m, data.Babies or {}, true, true)
+		local stars = data.Stars or 0
+		task.delay(3, function()
+			if self.Active then
+				if stars >= 2 then
+					celebrate()
+				else
+					complaint()
+				end
+			end
+		end)
+	end
 	caption.Text = Strings.t(if kind == "Arrival" then "Cutscene_Arrival" else "Cutscene_Return")
 	caption.Visible = true
 	skipBtn.Visible = true
-	if kind == "Return" and (data.Stars or 0) == 0 then
-		task.delay(2.5, complaint)
-	end
 	if Controllers.SoundController then
 		Controllers.SoundController:Play("Env_Bell")
 	end

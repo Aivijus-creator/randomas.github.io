@@ -20,6 +20,11 @@ local function mapsFolder(): Folder
 end
 
 function MapBuilder.buildLobby(): Model
+	-- The lobby saved in the place file (editable in Studio) wins.
+	local existing = workspace:FindFirstChild("Lobby")
+	if existing and existing:IsA("Model") then
+		return existing
+	end
 	local custom = mapsFolder():FindFirstChild("Lobby")
 	if custom and custom:IsA("Model") then
 		local m = custom:Clone()
@@ -32,6 +37,12 @@ end
 
 function MapBuilder.buildTemplate(): Model
 	local f = mapsFolder()
+	-- A daycare placed in Workspace (so it can be seen and edited in Studio) is moved out of the world.
+	local preview = workspace:FindFirstChild("DaycareTemplate")
+	if preview and preview:IsA("Model") then
+		preview.Parent = f
+		return preview
+	end
 	local custom = f:FindFirstChild("DaycareTemplate")
 	if custom and custom:IsA("Model") then
 		return custom

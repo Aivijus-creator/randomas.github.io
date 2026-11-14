@@ -1,0 +1,11 @@
+[package]
+name = "placegen"
+version = "0.1.0"
+edition = "2021"
+[dependencies]
+rbx_dom_weak = "3"
+rbx_xml = "1"
+rbx_types = "2"
+rbx_reflection_database = "1"
+serde_json = "1"
+rbx_reflection = "5"

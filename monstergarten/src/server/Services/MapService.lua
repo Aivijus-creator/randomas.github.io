@@ -5,7 +5,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local GameSettings = require(Shared.Config.GameSettings)
 local MapBuilder = require(script.Parent.Parent.World.MapBuilder)
-local ModelRegistry = require(Shared.World.ModelRegistry)
 
 local MapService = {}
 local template: Model? = nil
@@ -23,22 +22,6 @@ function MapService:Init()
 		template = t
 	else
 		warn("[MapService] daycare template build failed:", t)
-	end
-	-- Lobby NPCs (e.g. the shopkeeper behind the kiosk)
-	for _, spot in CollectionService:GetTagged("NPCSpot") do
-		local name = spot:GetAttribute("NPC")
-		if spot:IsA("BasePart") and type(name) == "string" then
-			local ok, npc = pcall(ModelRegistry.getNPC, name)
-			if ok and npc then
-				local floorY = spot.Position.Y - spot.Size.Y / 2 - 2.5
-				local look = spot.CFrame.LookVector
-				local pos = Vector3.new(spot.Position.X, floorY + (npc:GetAttribute("FloorOffset") or 3), spot.Position.Z)
-				npc:PivotTo(CFrame.lookAt(pos, pos + look))
-				npc:SetAttribute("Anim", "Idle")
-				CollectionService:AddTag(npc, "NPCModel")
-				npc.Parent = workspace
-			end
-		end
 	end
 	container = Instance.new("Folder")
 	container.Name = "Daycares"
@@ -93,8 +76,8 @@ function MapService:CloneDaycare(slot: number, isUnlocked: (string) -> boolean, 
 			m:AddPersistentPlayer(p)
 		end)
 	end
-	-- Moving clones keeps "Origin"-relative attributes valid except world-space ones; fix those.
-	local offset = self:SlotOrigin(slot).Position
+	-- World-space attributes were stored relative to where the template stood; shift them with the copy.
+	local offset = self:SlotOrigin(slot).Position - template:GetPivot().Position
 	for _, d in m:GetDescendants() do
 		local origin = d:GetAttribute("Origin")
 		if typeof(origin) == "Vector3" then

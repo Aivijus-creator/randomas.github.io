@@ -8,6 +8,28 @@ project and is built **by code**, so the game is playable as soon as it is synce
 
 ---
 
+## 0. Redagavimas (kur ką keisti) / Editing
+
+**Roblox Studio yra pagrindinis redaktorius.** Atidarius `Monstergarten.rbxlx`, viskas jau matosi be Play:
+
+| Ką keisti | Kur Studio lange **Explorer** |
+|---|---|
+| Lobby (pastatai, durys, medžiai, galerija) | `Workspace → Lobby` |
+| Darželis (kambariai, baldai, kiemas, stogas) | `Workspace → DaycareTemplate` (žaidimo metu jis kopijuojamas pamainoms) |
+| Veikėjai (kūdikiai, tėvai, NPC) | `ReplicatedStorage → Assets → Babies / Parents / NPCs` |
+| Kodas (skriptai) | `ServerScriptService → Server`, `StarterPlayer → StarterPlayerScripts → Client`, `ReplicatedStorage → Shared` (du kartus spustelėk skriptą) |
+| Balansas, kainos, tekstai | `ReplicatedStorage → Shared → Config` ir `Strings` (en / lt) |
+
+Baldus gali tempti, kopijuoti ir trinti kaip įprasta. Svarbu: palik jų pavadinimus, **Attributes** ir **Tags**
+(Properties lango apačioje), nes kodas pagal juos randa lovytes, orkaites, įrankių stovus ir t. t.
+Išsaugok: *File → Save to File* arba *Publish to Roblox*.
+
+> ⚠️ Jei vėliau paprašysi Claude perstatyti `Monstergarten.rbxlx` iš kodo, tavo rankiniai pakeitimai Studio'je
+> jame **nebus**. Didesnius pakeitimus geriau daryti kode (`src/`) arba pasakyk Claude, ką pakeitei.
+
+Programuotojams patogiau: **VS Code + Rojo** (žr. žemiau) – tada kodas gyvena `src/` aplanke, o Studio tik rodo
+rezultatą. Failą iš kodo galima perstatyti `tools/build_place.sh`, o patikrinti be Studio – `tools/run_tests.sh`.
+
 ## 1. What you need
 
 | Tool | Why | Install |

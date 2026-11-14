@@ -229,7 +229,7 @@ function QueueService:Start()
 			pad.Touched:Connect(function(hit)
 				local char = hit.Parent
 				local player = char and Players:GetPlayerFromCharacter(char)
-				if player and os.clock() - (recentLeave[player] or 0) > 4 then
+				if player and not (recentLeave[player] and os.clock() - recentLeave[player] < 4) then
 					QueueService:Join(player, id)
 				end
 			end)

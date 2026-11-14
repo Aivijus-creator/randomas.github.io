@@ -120,10 +120,54 @@ function ResultsController:Show(r)
 		self:Hide()
 	end, { Position = UDim2.new(0.5, if r.Tutorial then -100 else 20, 1, -66), Size = UDim2.fromOffset(200, 50), Parent = panel })
 	UI.bind(lobbyBtn, "Results_Lobby")
-	if (r.Stars or 0) >= 2 then
-		task.delay(2, function()
+	-- Win / lose mood: big animated banner, confetti or rain
+	local stars = r.Stars or 0
+	local win = stars >= 2 or r.Tutorial
+	local banner = UI.label("", {
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.new(0.5, 0, 0, -10),
+		Size = UDim2.fromOffset(520, 64),
+		TextColor3 = if win then C.Yellow else Color3.fromRGB(180, 200, 255),
+		TextStrokeTransparency = 0.1,
+		Parent = panel,
+	})
+	UI.bind(banner, if win then (if stars == 3 then "Results_Perfect" else "Results_Win") else "Results_Lose")
+	local bscale = UI.new("UIScale", { Scale = 0, Parent = banner })
+	TweenService:Create(bscale, TweenInfo.new(0.7, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+	if win then
+		task.spawn(function()
+			while panel.Visible and banner.Parent do
+				TweenService:Create(banner, TweenInfo.new(0.5, Enum.EasingStyle.Sine), { Rotation = 4 }):Play()
+				task.wait(0.5)
+				TweenService:Create(banner, TweenInfo.new(0.5, Enum.EasingStyle.Sine), { Rotation = -4 }):Play()
+				task.wait(0.5)
+			end
+		end)
+		task.delay(1.6, function()
 			confetti(gui)
 		end)
+		if stars == 3 then
+			task.delay(2.6, function()
+				confetti(gui)
+			end)
+		end
+	else
+		-- grey mood + rain drops
+		local tint = UI.new("Frame", { BackgroundColor3 = Color3.fromRGB(40, 50, 80), BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 0, Parent = gui })
+		TweenService:Create(tint, TweenInfo.new(1), { BackgroundTransparency = 0.6 }):Play()
+		task.delay(6, function()
+			tint:Destroy()
+		end)
+		for i = 1, 40 do
+			local drop = UI.new("Frame", { Size = UDim2.fromOffset(3, 18), Position = UDim2.new(math.random(), 0, -0.1, 0), BackgroundColor3 = Color3.fromRGB(150, 180, 255), BorderSizePixel = 0, ZIndex = 20, Parent = gui })
+			TweenService:Create(drop, TweenInfo.new(0.9 + math.random() * 0.6, Enum.EasingStyle.Linear), { Position = UDim2.new(drop.Position.X.Scale, 0, 1.1, 0) }):Play()
+			task.delay(1.6, function()
+				drop:Destroy()
+			end)
+			if i % 8 == 0 then
+				task.wait(0.15)
+			end
+		end
 	end
 end
 

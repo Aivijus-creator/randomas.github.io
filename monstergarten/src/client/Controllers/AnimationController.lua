@@ -160,6 +160,26 @@ local function procedural(entry, anim: string, t: number)
 		offset = CFrame.Angles(math.sin(p * 5) * 0.12, 0, math.sin(p * 3.5) * 0.15)
 	elseif anim == "Frozen" then
 		offset = CFrame.new()
+	elseif anim == "Windup" then
+		-- getting ready to do something naughty: lean back, puff up, tremble faster and faster
+		local k = (p * 1.4) % 1
+		offset = CFrame.new(math.sin(p * (20 + k * 30)) * 0.08 * (0.5 + k), k * 0.3, 0) * CFrame.Angles(math.rad(-18) * k, 0, 0)
+		squash = 1 + k * 0.18
+	elseif anim == "Panic" then
+		local hop = math.abs(math.sin(p * 14))
+		offset = CFrame.new(math.sin(p * 7) * 0.35, hop * 0.8, 0) * CFrame.Angles(0, math.sin(p * 7) * 0.5, math.sin(p * 14) * 0.3)
+		squash = 1 + (0.5 - hop) * 0.2
+	elseif anim == "Shiver" then
+		offset = CFrame.new(math.sin(p * 55) * 0.07, 0, math.cos(p * 47) * 0.05) * CFrame.Angles(math.rad(10), 0, 0)
+		squash = 0.95
+	elseif anim == "Celebrate" then
+		local cycle = p % 1.2
+		local k = cycle / 1.2
+		offset = CFrame.new(0, math.sin(k * math.pi) * 1.6, 0) * CFrame.Angles(0, k * math.pi * 2, math.sin(p * 6) * 0.15)
+		squash = 1 + math.cos(k * math.pi * 2) * 0.1
+	elseif anim == "Sad" then
+		offset = CFrame.new(0, -0.15, 0) * CFrame.Angles(math.rad(22), 0, math.sin(p * 1.3) * 0.12)
+		squash = 0.92
 	elseif anim == "Chaos" then
 		local k = (p * 2) % 1
 		offset = if k < 0.6 then CFrame.Angles(math.rad(-25) * (k / 0.6), 0, 0) else CFrame.Angles(math.rad(30), 0, 0)
@@ -244,7 +264,7 @@ local function updateGhost(entry)
 end
 
 function AnimationController:Start()
-	for _, tag in { "Baby", "PetModel", "NPCModel" } do
+	for _, tag in { "Baby", "PetModel", "NPCModel", "ParentModel" } do
 		for _, m in CollectionService:GetTagged(tag) do
 			if m:IsA("Model") then
 				setup(m)

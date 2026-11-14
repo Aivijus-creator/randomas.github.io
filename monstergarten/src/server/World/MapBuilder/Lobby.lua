@@ -3,6 +3,9 @@ local B = require(script.Parent.Builder)
 local F = require(script.Parent.Props.Furniture)
 local O = require(script.Parent.Props.Outdoor)
 local ServerUtil = require(script.Parent.Parent.Parent.ServerUtil)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ModelRegistry = require(ReplicatedStorage:WaitForChild("Shared").World.ModelRegistry)
+local BabiesConfig = require(ReplicatedStorage:WaitForChild("Shared").Config.Babies)
 local P = B.Palette
 local M = Enum.Material
 
@@ -150,8 +153,8 @@ local function kiosk(parent: Instance, cf: CFrame)
 	local sign = B.part(m, Vector3.new(8, 2, 0.4), cf * CFrame.new(0, 12.4, -3.4), P.Plum, M.SmoothPlastic, { CanCollide = false })
 	B.surfaceText(sign, Enum.NormalId.Front, "🛒 SHOP", { TextColor3 = P.Yellow })
 	-- goods on the counter
-	for i = -2, 2 do
-		B.ball(m, 0.9, (cf * CFrame.new(i * 2, 4.9, -2.2)).Position, ({ P.Red, P.Yellow, P.Lavender, P.Mint, P.Pumpkin })[i + 3], M.SmoothPlastic, { CanCollide = false })
+	for i, x in { -4.5, -2.6, 2.6, 4.5 } do
+		B.ball(m, 0.9, (cf * CFrame.new(x, 4.9, -2.2)).Position, ({ P.Red, P.Yellow, P.Mint, P.Pumpkin })[i], M.SmoothPlastic, { CanCollide = false })
 	end
 	local npc = B.marker(m, "ShopkeeperSpot", cf * CFrame.new(0, 3, 1))
 	npc:SetAttribute("NPC", "Shopkeeper")
@@ -273,8 +276,8 @@ function Lobby.build(parent: Instance): Model
 	-- ground + street
 	B.floor(floors, -130, -110, 130, 100, 0, Color3.fromRGB(110, 160, 105), M.Grass, 2)
 	B.part(floors, Vector3.new(120, 0.2, 24), CFrame.new(0, 0.1, -24), Color3.fromRGB(150, 140, 160), M.Cobblestone)
-	B.part(floors, Vector3.new(24, 0.2, 80), CFrame.new(0, 0.1, 20), Color3.fromRGB(150, 140, 160), M.Cobblestone)
-	B.part(floors, Vector3.new(18, 0.2, 14), CFrame.new(0, 0.12, -42), Color3.fromRGB(200, 180, 150), M.Cobblestone)
+	B.part(floors, Vector3.new(24, 0.2, 80), CFrame.new(0, 0.13, 20), Color3.fromRGB(150, 140, 160), M.Cobblestone)
+	B.part(floors, Vector3.new(18, 0.2, 14), CFrame.new(0, 0.16, -42), Color3.fromRGB(200, 180, 150), M.Cobblestone)
 
 	building(m)
 
@@ -308,6 +311,40 @@ function Lobby.build(parent: Instance): Model
 	B.tag(arrow, "Bobber")
 
 	kiosk(m, cfAt(-52, 0, 14, 1, 0))
+	-- Shopkeeper behind the kiosk counter (the author's model when available)
+	local okNpc, keeper = pcall(ModelRegistry.getNPC, "Shopkeeper")
+	if okNpc and keeper then
+		B.part(m, Vector3.new(2.6, 2.6, 8), CFrame.new(-53.8, 1.3, 14), P.DarkWood, M.WoodPlanks) -- platform behind the counter
+		local pos = Vector3.new(-53.8, 2.6 + (keeper:GetAttribute("FloorOffset") or 3), 14)
+		keeper:PivotTo(CFrame.lookAt(pos, pos + Vector3.new(1, 0, 0)))
+		keeper:SetAttribute("Anim", "Idle")
+		B.tag(keeper, "NPCModel")
+		keeper.Parent = m
+	end
+	-- Monster gallery: every baby on a little pedestal with its name
+	local gallery = B.model(m, "MonsterGallery")
+	for i, id in BabiesConfig.Order do
+		local def = BabiesConfig.Defs[id]
+		local x = -84 + (i - 1) * 6.4
+		local base = CFrame.new(x, 0, 54)
+		B.column(gallery, 1.2, 4.6, (base * CFrame.new(0, 0.6, 0)).Position, P.Lavender, M.SmoothPlastic)
+		B.column(gallery, 0.3, 5, (base * CFrame.new(0, 1.35, 0)).Position, P.Cream, M.SmoothPlastic)
+		local plate = B.part(gallery, Vector3.new(3.6, 1, 0.2), base * CFrame.new(0, 0.7, -2.35), P.Cream, M.SmoothPlastic, { CanCollide = false })
+		B.surfaceText(plate, Enum.NormalId.Front, def.Name.en .. " / " .. def.Name.lt, { TextColor3 = P.Plum })
+		local okB, statue = pcall(ModelRegistry.getBaby, id)
+		if okB and statue then
+			local pos = Vector3.new(x, 1.5 + (statue:GetAttribute("FloorOffset") or 1.5), 54)
+			statue:PivotTo(CFrame.lookAt(pos, pos + Vector3.new(0, 0, -1)))
+			statue.Name = id .. "Statue"
+			statue:SetAttribute("Anim", "Happy")
+			B.tag(statue, "NPCModel")
+			statue.Parent = gallery
+		end
+	end
+	local gsign = B.part(gallery, Vector3.new(14, 2.4, 0.4), CFrame.new(-55, 6, 59), P.Plum, M.SmoothPlastic, { CanCollide = false })
+	B.surfaceText(gsign, Enum.NormalId.Front, "👾 MONSTER GALLERY", { TextColor3 = Color3.fromRGB(255, 220, 140) })
+	B.part(gallery, Vector3.new(0.5, 6, 0.5), CFrame.new(-61, 3, 59.3), P.DarkWood, M.Wood)
+	B.part(gallery, Vector3.new(0.5, 6, 0.5), CFrame.new(-49, 3, 59.3), P.DarkWood, M.Wood)
 	wardrobe(m, cfAt(52, 0, 14, -1, 0))
 	petPen(m, Vector3.new(0, 0, 52))
 	leaderboard(m, cfAt(-30, 0, 34, 0.5, -1), "Stars", "⭐ TOP NANNIES")
@@ -334,7 +371,7 @@ function Lobby.build(parent: Instance): Model
 	end
 	O.bench(decor, cfAt(-18, 0, 20, 1, 0), P.Lavender)
 	O.bench(decor, cfAt(18, 0, 20, -1, 0), P.Mint)
-	O.mailbox(decor, cfAt(-9, 0, -45, 0, 1))
+	O.mailbox(decor, cfAt(-16, 0, 10, 1, 0))
 	O.balloon(decor, Vector3.new(40, 70, -10))
 	O.fence(decor, Vector3.new(-90, 0, -50), Vector3.new(-90, 0, 80), P.White)
 	O.fence(decor, Vector3.new(90, 0, -50), Vector3.new(90, 0, 80), P.White)
@@ -342,6 +379,20 @@ function Lobby.build(parent: Instance): Model
 	for _, p in { { -35, 0 }, { 35, 0 }, { -10, 62 }, { 10, 62 } } do
 		O.flowers(decor, cfAt(p[1], 0, p[2]), 12, Random.new(p[1] + p[2] * 3))
 	end
+	-- Trees all around: big ones at the edge of the map, small ones near the centre.
+	O.forest(decor, -125, -105, 125, 95, Vector3.new(0, 0, -10), 130, {
+		{ -36, -82, 36, -42 }, -- Monstergarten house
+		{ -62, -40, 62, -12 }, -- shift doors + street
+		{ -14, -12, 14, 62 }, -- main street to the pet pen
+		{ -62, 2, -40, 26 }, -- shop kiosk
+		{ 40, 2, 62, 26 }, -- wardrobe
+		{ -18, 42, 18, 64 }, -- pet pen
+		{ -38, 26, -22, 40 }, { 22, 26, 38, 40 }, -- leaderboards
+		{ -24, 4, 24, 30 }, -- spawn plaza, benches, gift
+		{ -92, 78, 92, 82 }, { -92, -52, -88, 82 }, { 88, -52, 92, 82 }, -- fences
+		{ -90, 46, -18, 64 }, -- monster gallery
+	}, 13, 2024)
+
 	-- bats + low fog particles
 	local bats = B.marker(decor, "Bats", CFrame.new(0, 40, -40), Vector3.new(120, 4, 60))
 	B.particles(bats, {

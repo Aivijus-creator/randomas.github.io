@@ -123,7 +123,7 @@ function LightingController:Start()
 			end
 			-- darkness: blackout indoors, dark rooms
 			local room = r and roomOf(m, r.Position)
-			local indoor = room ~= nil and room ~= "Yard" and room ~= "Outside"
+			local indoor = room ~= nil and room ~= "Yard" and room ~= "Outside" and room ~= "Front"
 			darkTarget = 0
 			if not powerOn and indoor then
 				darkTarget = -0.32

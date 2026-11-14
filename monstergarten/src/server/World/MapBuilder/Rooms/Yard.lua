@@ -5,9 +5,9 @@ return function(ctx)
 
 	-- Paths
 	O.path(R, Vector3.new(-13, 0, -25), Vector3.new(-13, 0, -55), 5)
-	O.path(R, Vector3.new(-13, 0, -55), Vector3.new(0, 0, -84), 5)
-	O.path(R, Vector3.new(41, 0, -25), Vector3.new(30, 0, -50), 4)
-	O.path(R, Vector3.new(30, 0, -50), Vector3.new(-13, 0, -55), 4)
+	O.path(R, Vector3.new(-13, 0.02, -55), Vector3.new(0, 0.02, -84), 5)
+	O.path(R, Vector3.new(41, 0.06, -25), Vector3.new(30, 0.06, -50), 4)
+	O.path(R, Vector3.new(30, 0.04, -50), Vector3.new(-13, 0.04, -55), 4)
 	O.sandbox(R, cfAt(-30, 0, -42), 10)
 	O.swing(R, cfAt(18, 0, -40, 0, 1))
 	for _, z in { -50, -60, -70 } do
@@ -29,6 +29,12 @@ return function(ctx)
 		O.flowers(R, cfAt(p[1], 0, p[2]), 10, Random.new(p[1] * 7 + p[2]))
 	end
 	O.bench(R, cfAt(0, 0, -30, 0, -1), P.Peach)
+	O.picnicTable(R, cfAt(-26, 0, -60))
+	O.playhouse(R, cfAt(22, 0, -70, 0, 1))
+	O.hopscotch(R, cfAt(-3, 0, -40))
+	for _, p in { { -42, -40 }, { -42, -80 }, { 42, -45 }, { 42, -64 }, { 30, -82 }, { -20, -82 } } do
+		O.bush(R, cfAt(p[1], 0, p[2]), false)
+	end
 	O.lampPost(R, cfAt(-16, 0, -50), "RoomLight")
 	O.lampPost(R, cfAt(10, 0, -80), "RoomLight")
 	-- Fences around (north fence has the gate at x = 0)

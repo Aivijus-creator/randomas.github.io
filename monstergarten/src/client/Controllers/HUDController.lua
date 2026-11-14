@@ -486,7 +486,7 @@ function HUDController:Start()
 		if s then
 			UI.closeAll()
 			syncCards(s)
-			clockLabel.Text = "🕖 " .. MathUtil.formatClock(s.Clock or 7)
+			clockLabel.Text = if s.ClockFrozen then Strings.t("HUD_TutorialClock") else ("🕖 " .. MathUtil.formatClock(s.Clock or 7))
 			timeBar(1 - math.clamp((s.Time or 0) / (s.Duration or 480), 0, 1), if (s.Duration - s.Time) < 30 then C.Red else C.Mint)
 			buildingBar((s.Building or 100) / 100, if (s.Building or 100) < 50 then C.Red else C.Green)
 		else
@@ -516,7 +516,7 @@ function HUDController:Start()
 			updateCards(os.clock() - t0)
 			local s = State.Shift
 			if s then
-				clockLabel.Text = "🕖 " .. MathUtil.formatClock(s.Clock or 7)
+				clockLabel.Text = if s.ClockFrozen then Strings.t("HUD_TutorialClock") else ("🕖 " .. MathUtil.formatClock(s.Clock or 7))
 			end
 		end
 	end)

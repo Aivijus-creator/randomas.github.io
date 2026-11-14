@@ -74,12 +74,28 @@ function ChaosService:Tick(session, dt)
 	end
 end
 
+-- Warning icons shown over a baby just before its chaos action (gives the nanny a moment to react).
+local WARN_EMOJI = {
+	Sneeze = "🔥", Chomp = "😋", Haunt = "👻", Wail = "😭", Ink = "🖤", Stomp = "💥", Sparks = "⚡", Roots = "🌿", Freeze = "❄️",
+}
+local WARN_TIME = 1.6
+
 -- Helper: count down a timer on the baby; returns true when it fires (and re-arms).
+-- About 1.6 s before it fires the baby plays a "Windup" animation and a warning bubble pops up.
 function ChaosService.every(baby, key: string, interval: number, dt: number): boolean
 	local t = (baby.Data[key] or interval) - dt
 	if t <= 0 then
 		baby.Data[key] = interval
+		baby.Data[key .. "_warned"] = false
 		return true
+	end
+	if interval >= 3 and t <= WARN_TIME and not baby.Data[key .. "_warned"] and WARN_EMOJI[key] then
+		baby.Data[key .. "_warned"] = true
+		BabyBase.anim(baby, "Windup", WARN_TIME)
+		local session = baby.Session
+		if session then
+			session:Effect("ChaosWarn", { Uid = baby.Uid, Emoji = WARN_EMOJI[key], Time = WARN_TIME })
+		end
 	end
 	baby.Data[key] = t
 	return false

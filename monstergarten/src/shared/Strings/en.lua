@@ -26,6 +26,9 @@ return {
 	Cutscene_Skip = "⏭ Skip", Cutscene_Complaint = "📄 COMPLAINT!\nMy baby is grumpy!",
 	-- results
 	Results_Title = "🌙 Shift complete!", Results_TutorialDone = "🎉 You're a real Monstergarten nanny now!", Results_MVP = "MVP: {1}",
+	Results_Win = "🎉 Great job!",
+	Results_Perfect = "🌟 PERFECT SHIFT! 🌟",
+	Results_Lose = "😢 The parents are not happy...",
 	Results_Again = "🔁 Play again", Results_Lobby = "🏠 To lobby",
 	-- tutorial
 	Tutorial_Offer = "New here? Learn the ropes in a quick tutorial!", Tutorial_Start = "📖 Tutorial", Tutorial_Skip = "Skip", Tutorial_Next = "Next ▶", Tutorial_Step = "Step {1}/{2}",
@@ -42,6 +45,12 @@ return {
 	Quest_ThreeStarDragling = "Get 3 stars with Dragling {1} times", Quest_CookDishes = "Cook {1} dishes", Quest_CleanMess = "Clean up {1} messes",
 	Quest_PlayShifts = "Play {1} shifts", Quest_Bedtime = "Put babies to bed {1} times", Quest_RepairFurniture = "Repair {1} pieces of furniture", Quest_EarnStars = "Earn {1} stars",
 	-- toasts
+	Toast_BabyBurning = "🔥 {1} is on fire! Spray it with the extinguisher!",
+	Toast_BabyFrozen = "❄️ {1} is frozen solid!",
+	Cutscene_Happy = "🎉 The parents are thrilled!",
+	HUD_TutorialClock = "⏸ Tutorial – the clock is paused",
+	Queue_OnlyHost = "Only the first player at the door can change the mode.",
+	Queue_LockedLevel = "{1} unlocks at daycare level {2}.",
 	Toast_DaycareLevel = "🏠 Daycare level {1}!", Toast_NannyLevel = "🍼 Nanny level {1}!", Toast_NewTitle = "🎖 New title: {1}",
 	Toast_Unlocked_Baby = "🔓 Unlocked: {1}!", Toast_Unlocked_Tool = "🔓 New tool: {1}!", Toast_Unlocked_Difficulty = "🔓 New difficulty: {1}!",
 	Toast_Unlocked_Room = "🔓 New room: {1}!", Toast_Unlocked_Shop = "🔓 In the shop: {1}!", Toast_Unlocked_Cosmetic = "🔓 Unlocked: {1}!",

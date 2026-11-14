@@ -67,7 +67,7 @@ function F.mobile(parent: Instance, pos: Vector3): Model
 			B.deco(m, Vector3.new(0.7, 0.7, 0.2), CFrame.new(pos + o) * CFrame.Angles(0, 0, math.rad(45)), colors[i], M.Neon)
 		end
 	end
-	B.tag(m, "Spinner")
+	B.tag(m, "Spinner", "CeilingDecor")
 	m:SetAttribute("Speed", 0.6)
 	return m
 end
@@ -190,6 +190,7 @@ function F.ceilingLamp(parent: Instance, pos: Vector3, color: Color3?, range: nu
 	B.tag(bulb, "LampBulb")
 	B.pointLight(bulb, Color3.fromRGB(255, 220, 180), range or 26, 1.1, "RoomLight")
 	m.PrimaryPart = shade
+	B.tag(m, "CeilingDecor")
 	return m
 end
 
@@ -665,6 +666,160 @@ function F.heater(parent: Instance, cf: CFrame): Model
 	m:SetAttribute("Radius", 5)
 	m:SetAttribute("Electric", true)
 	m:SetAttribute("Station", true)
+	return m
+end
+
+-- Squashy bean bag.
+function F.beanBag(parent: Instance, cf: CFrame, color: Color3?): Model
+	local m = B.model(parent, "BeanBag")
+	B.root(m, cf * CFrame.new(0, 1, 0))
+	local c = color or P.Pink
+	local body = B.part(m, Vector3.new(3.6, 2.2, 3.6), at(cf, 0, 1.1, 0), c, M.Fabric)
+	local mesh = Instance.new("SpecialMesh")
+	mesh.MeshType = Enum.MeshType.Sphere
+	mesh.Parent = body
+	local top = B.part(m, Vector3.new(2.6, 1.2, 2.2), at(cf, 0, 2.2, 0.5) * CFrame.Angles(math.rad(-20), 0, 0), c:Lerp(P.White, 0.15), M.Fabric, { CanCollide = false })
+	local mesh2 = Instance.new("SpecialMesh")
+	mesh2.MeshType = Enum.MeshType.Sphere
+	mesh2.Parent = top
+	F.furniture(m, true, 60)
+	return m
+end
+
+function F.toyChest(parent: Instance, cf: CFrame, color: Color3?): Model
+	local m = B.model(parent, "ToyChest")
+	B.root(m, cf * CFrame.new(0, 1, 0))
+	local c = color or P.Peach
+	B.part(m, Vector3.new(5, 2.4, 2.8), at(cf, 0, 1.2, 0), c, M.WoodPlanks)
+	B.part(m, Vector3.new(5.2, 0.4, 3), at(cf, 0, 2.6, 0.3) * CFrame.Angles(math.rad(-25), 0, 0), c:Lerp(P.Plum, 0.2), M.WoodPlanks, { CanCollide = false })
+	B.ball(m, 1, at(cf, -1.2, 2.6, 0).Position, P.Red, M.SmoothPlastic, { CanCollide = false })
+	B.part(m, Vector3.new(0.9, 0.9, 0.9), at(cf, 0.3, 2.7, -0.2) * CFrame.Angles(0.4, 0.5, 0), P.Blue, M.SmoothPlastic, { CanCollide = false })
+	B.cyl(m, 1.4, 0.5, at(cf, 1.4, 2.7, 0) * CFrame.Angles(0, 0, 0.6), P.Yellow, M.SmoothPlastic, { CanCollide = false })
+	B.deco(m, Vector3.new(1.4, 0.8, 0.05), at(cf, 0, 1.4, -1.42), P.Yellow, M.SmoothPlastic)
+	F.furniture(m, true, 80)
+	return m
+end
+
+-- Play tent (two cloth slopes + flag).
+function F.playTent(parent: Instance, cf: CFrame): Model
+	local m = B.model(parent, "PlayTent")
+	B.root(m, cf * CFrame.new(0, 2, 0))
+	B.wedge(m, Vector3.new(6, 4.5, 2.6), at(cf, 0, 2.25, -1.3), P.Mint, M.Fabric, { CanCollide = false })
+	B.wedge(m, Vector3.new(6, 4.5, 2.6), at(cf, 0, 2.25, 1.3) * CFrame.Angles(0, math.pi, 0), P.Lavender, M.Fabric, { CanCollide = false })
+	B.part(m, Vector3.new(0.15, 2.4, 0.15), at(cf, 3, 5.6, 0), P.Wood, M.Wood, { CanCollide = false })
+	B.wedge(m, Vector3.new(0.1, 0.8, 1.2), at(cf, 3, 6.4, 0.6) * CFrame.Angles(0, math.rad(90), math.rad(90)), P.Pink, M.Fabric, { CanCollide = false })
+	B.deco(m, Vector3.new(5.6, 0.1, 4.8), at(cf, 0, 0.27, 0), P.Cream, M.Fabric)
+	F.furniture(m, true, 60)
+	return m
+end
+
+function F.changingTable(parent: Instance, cf: CFrame): Model
+	local m = B.model(parent, "ChangingTable")
+	B.root(m, cf * CFrame.new(0, 2, 0))
+	B.part(m, Vector3.new(6, 3.4, 2.6), at(cf, 0, 1.7, 0), P.White, M.Wood)
+	B.part(m, Vector3.new(6, 0.5, 2.6), at(cf, 0, 3.65, 0), P.Mint, M.Fabric)
+	for i = -1, 1 do
+		B.deco(m, Vector3.new(1.6, 1.2, 0.05), at(cf, i * 1.9, 1.7, -1.32), P.Lavender)
+		B.ball(m, 0.25, at(cf, i * 1.9, 1.7, -1.4).Position, P.Plum, M.SmoothPlastic, { CanCollide = false })
+	end
+	for i = 0, 3 do
+		B.cyl(m, 0.9, 0.7, at(cf, -2.2 + i * 0.6, 4.35, 0.6) * CFrame.Angles(0, 0, math.rad(90)), P.White, M.Fabric, { CanCollide = false })
+	end
+	F.furniture(m, true, 80)
+	return m
+end
+
+function F.armchair(parent: Instance, cf: CFrame, color: Color3?): Model
+	local c = color or P.Peach
+	local m = B.model(parent, "Armchair")
+	B.root(m, cf * CFrame.new(0, 1.5, 0))
+	B.part(m, Vector3.new(3.6, 1.6, 3.2), at(cf, 0, 1, 0), c, M.Fabric)
+	B.part(m, Vector3.new(3.6, 2.6, 0.9), at(cf, 0, 2.4, 1.2), c, M.Fabric)
+	for _, sx in { -1.9, 1.9 } do
+		B.part(m, Vector3.new(0.8, 1.8, 3.2), at(cf, sx, 1.7, 0), c:Lerp(P.Plum, 0.12), M.Fabric)
+	end
+	B.part(m, Vector3.new(2.8, 0.5, 2.4), at(cf, 0, 2, -0.2), P.Cream, M.Fabric, { CanCollide = false })
+	F.furniture(m, true, 70)
+	return m
+end
+
+-- Row of kid cubbies with name tags and little coats.
+function F.cubbies(parent: Instance, cf: CFrame, count: number?): Model
+	local n = count or 4
+	local m = B.model(parent, "Cubbies")
+	B.root(m, cf * CFrame.new(0, 3, 0))
+	local w = n * 2.2
+	B.part(m, Vector3.new(w + 0.4, 6, 1.8), at(cf, 0, 3, 0.4), P.Wood, M.WoodPlanks)
+	local colors = { P.Pink, P.Mint, P.Lavender, P.Peach, P.Yellow, P.Blue }
+	for i = 1, n do
+		local x = -w / 2 + 1.1 + (i - 1) * 2.2
+		B.part(m, Vector3.new(1.9, 2.4, 0.3), at(cf, x, 4, -0.45), P.Cream, M.SmoothPlastic, { CanCollide = false })
+		B.deco(m, Vector3.new(1.3, 1.6, 0.3), at(cf, x, 3.9, -0.65), colors[(i - 1) % #colors + 1], M.Fabric)
+		B.deco(m, Vector3.new(1.4, 0.45, 0.05), at(cf, x, 5.5, -0.52), P.White, M.SmoothPlastic)
+		B.part(m, Vector3.new(1.9, 1.2, 0.3), at(cf, x, 1.2, -0.45), P.Cream, M.SmoothPlastic, { CanCollide = false })
+		B.deco(m, Vector3.new(0.8, 0.5, 1), at(cf, x - 0.4, 0.55, -0.4), colors[(i + 2) % #colors + 1], M.SmoothPlastic)
+	end
+	return m
+end
+
+function F.noticeBoard(parent: Instance, cf: CFrame): Model
+	local m = B.model(parent, "NoticeBoard")
+	local b = B.deco(m, Vector3.new(6, 3.6, 0.2), cf, Color3.fromRGB(205, 160, 110), M.Wood)
+	m.PrimaryPart = b
+	B.deco(m, Vector3.new(6.4, 4, 0.15), cf * CFrame.new(0, 0, 0.1), P.Plum, M.SmoothPlastic)
+	local r = Random.new(5)
+	for _ = 1, 6 do
+		local c = ({ P.White, P.Yellow, P.Pink, P.Mint })[r:NextInteger(1, 4)]
+		B.deco(m, Vector3.new(r:NextNumber(1, 1.6), r:NextNumber(1, 1.4), 0.05), cf * CFrame.new(r:NextNumber(-2.2, 2.2), r:NextNumber(-1.1, 1.1), -0.12) * CFrame.Angles(0, 0, math.rad(r:NextNumber(-10, 10))), c, M.SmoothPlastic)
+	end
+	return m
+end
+
+function F.laundryBasket(parent: Instance, cf: CFrame): Model
+	local m = B.model(parent, "LaundryBasket")
+	B.root(m, cf * CFrame.new(0, 1, 0))
+	B.cyl(m, 2, 2.2, at(cf, 0, 1, 0) * CFrame.Angles(0, 0, math.rad(90)), P.Wood, M.Fabric)
+	B.ball(m, 1, at(cf, 0.3, 2.1, 0).Position, P.Pink, M.Fabric, { CanCollide = false })
+	B.ball(m, 0.9, at(cf, -0.4, 2.15, 0.3).Position, P.Mint, M.Fabric, { CanCollide = false })
+	return m
+end
+
+function F.potty(parent: Instance, cf: CFrame, color: Color3?): Model
+	local m = B.model(parent, "Potty")
+	B.root(m, cf * CFrame.new(0, 0.8, 0))
+	B.cyl(m, 1.3, 1.8, at(cf, 0, 0.65, 0) * CFrame.Angles(0, 0, math.rad(90)), color or P.Yellow, M.SmoothPlastic)
+	B.cyl(m, 0.25, 1.9, at(cf, 0, 1.4, 0) * CFrame.Angles(0, 0, math.rad(90)), P.White, M.SmoothPlastic, { CanCollide = false })
+	B.part(m, Vector3.new(1.6, 1.4, 0.3), at(cf, 0, 1.9, 0.8), color or P.Yellow, M.SmoothPlastic, { CanCollide = false })
+	return m
+end
+
+function F.cabinet(parent: Instance, cf: CFrame, w: number?, color: Color3?): Model
+	local width = w or 4
+	local m = B.model(parent, "Cabinet")
+	B.root(m, cf * CFrame.new(0, 2, 0))
+	B.part(m, Vector3.new(width, 4.4, 2), at(cf, 0, 2.2, 0), color or P.White, M.Wood)
+	B.deco(m, Vector3.new(0.08, 4, 0.05), at(cf, 0, 2.2, -1.02), P.Plum)
+	for _, sx in { -0.4, 0.4 } do
+		B.ball(m, 0.3, at(cf, sx, 2.6, -1.1).Position, P.Yellow, M.Metal, { CanCollide = false })
+	end
+	B.column(m, 0.9, 0.6, at(cf, -width / 4, 4.85, 0).Position, P.Mint, M.SmoothPlastic, { CanCollide = false })
+	B.ball(m, 0.7, at(cf, width / 4, 4.75, 0).Position, P.Pink, M.SmoothPlastic, { CanCollide = false })
+	F.furniture(m, true, 80)
+	return m
+end
+
+function F.highChair(parent: Instance, cf: CFrame, color: Color3?): Model
+	local c = color or P.Mint
+	local m = B.model(parent, "HighChair")
+	B.root(m, cf * CFrame.new(0, 2, 0))
+	for _, sx in { -0.7, 0.7 } do
+		for _, sz in { -0.7, 0.7 } do
+			B.part(m, Vector3.new(0.25, 3.4, 0.25), at(cf, sx, 1.7, sz), P.Wood, M.Wood, { CanCollide = false })
+		end
+	end
+	B.part(m, Vector3.new(1.9, 0.3, 1.9), at(cf, 0, 3.4, 0), c, M.SmoothPlastic)
+	B.part(m, Vector3.new(1.9, 1.6, 0.25), at(cf, 0, 4.2, 0.85), c, M.SmoothPlastic, { CanCollide = false })
+	B.part(m, Vector3.new(2.2, 0.2, 1), at(cf, 0, 4, -1), P.White, M.SmoothPlastic, { CanCollide = false })
 	return m
 end
 

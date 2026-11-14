@@ -73,7 +73,7 @@ local function wanderTarget(baby, session): Vector3?
 		local offset = Vector3.new(math.random(-r, r), 0, math.random(-r, r))
 		local p = baby.Pos + offset
 		local room = session:RoomAt(p + Vector3.new(0, 2, 0))
-		if room and room ~= "Outside" and room ~= "Stairs" then
+		if room and room ~= "Outside" and room ~= "Stairs" and room ~= "Front" then
 			local y = floorAt(session, p)
 			if y then
 				return Vector3.new(p.X, y, p.Z)
