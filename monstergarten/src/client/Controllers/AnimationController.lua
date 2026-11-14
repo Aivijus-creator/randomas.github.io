@@ -68,7 +68,7 @@ local function setup(model: Model)
 		if d:IsA("BasePart") then
 			if d:GetAttribute("SquashPart") then
 				entry.Body = d
-				entry.BodySize = d.Size
+				entry.BodySize = d.Size / ((model:GetAttribute("Scale") or 1) :: number)
 			end
 			if d.Name ~= "HumanoidRootPart" then
 				table.insert(entry.Parts, d)
@@ -166,7 +166,10 @@ local function procedural(entry, anim: string, t: number)
 	end
 	joint.C0 = entry.BaseC0 * CFrame.new(0, floatY, 0) * offset
 	if entry.Body and entry.BodySize then
-		entry.Body.Size = Vector3.new(entry.BodySize.X / math.sqrt(squash), entry.BodySize.Y * squash, entry.BodySize.Z / math.sqrt(squash))
+		-- BodySize is the size at scale 1; the server may grow the model (Slimy) via the Scale attribute.
+		local s = (entry.Model:GetAttribute("Scale") or 1) :: number
+		local base = entry.BodySize * s
+		entry.Body.Size = Vector3.new(base.X / math.sqrt(squash), base.Y * squash, base.Z / math.sqrt(squash))
 	end
 	-- red tint during tantrums
 	if anim == "Tantrum" and not entry.Highlight then

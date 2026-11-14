@@ -131,6 +131,24 @@ function ShiftService:SendState(session)
 	for _, p in session.Players do
 		ev:FireClient(p, state)
 	end
+	-- Hall shift board: live list of babies and how they feel.
+	local board = session:Tagged("ShiftBoard")[1]
+	local list = board and board:FindFirstChild("List", true)
+	if list and list:IsA("TextLabel") then
+		local lines = { ("🕖 %02d:%02d"):format(math.floor(state.Clock), math.floor((state.Clock % 1) * 60)) }
+		for _, b in session.BabyList do
+			local mood = 0
+			local n = 0
+			for _, v in b.Needs do
+				mood += v
+				n += 1
+			end
+			mood = if n > 0 then mood / n else 100
+			local face = if b.Tantrum then "😡" elseif b.Escaped then "🏃" elseif mood > 70 then "😃" elseif mood > 35 then "😐" else "😢"
+			table.insert(lines, b.Def.Emoji .. " " .. b.Def.Name.en .. "  " .. face)
+		end
+		list.Text = table.concat(lines, "\n")
+	end
 end
 
 function ShiftService:StartShift(players: { Player }, opts: any): any?
