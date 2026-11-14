@@ -104,8 +104,8 @@ function BabyBase.place(baby)
 		return
 	end
 	local y = baby.FloorOffset * baby.Scale
-	if baby.Def.Id == "Ghostie" then
-		y += 0.6
+	if baby.Def.Id == "Ghostie" and baby.Model:GetAttribute("Placeholder") then
+		y += 0.6 -- designed models carry their own float height (Lift)
 	end
 	baby.Root.CFrame = CFrame.new(baby.Pos + Vector3.new(0, y, 0)) * CFrame.Angles(0, baby.Yaw, 0)
 end

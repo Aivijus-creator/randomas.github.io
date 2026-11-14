@@ -244,7 +244,7 @@ local function updateGhost(entry)
 end
 
 function AnimationController:Start()
-	for _, tag in { "Baby", "PetModel" } do
+	for _, tag in { "Baby", "PetModel", "NPCModel" } do
 		for _, m in CollectionService:GetTagged(tag) do
 			if m:IsA("Model") then
 				setup(m)

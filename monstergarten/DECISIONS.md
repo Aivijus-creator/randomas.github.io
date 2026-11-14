@@ -86,3 +86,10 @@ Decisions taken where the GDD left room (GDD 0.1 point 6). Each can be changed i
 ## Things intentionally simplified
 - The Music Box pass adds a track picker to Settings (only tracks with uploaded ids in `Assets.MusicBox` appear).
 - Face decals (`Faces` folder) are part of the model contract; mood is shown by the mood ring and bubbles.
+
+## Designed characters
+- The author's 3D character sheet is imported by `tools/import_characters.py` into `shared/World/CharacterData.lua`.
+  Spheres become ellipsoids (Part + SpecialMesh Sphere), boxes are blocks, cylinders keep their X axis.
+  Units × `scale` = studs; `lift` raises floating characters (Ghostie). Glowing parts use Neon.
+- All visible parts are welded to an invisible `Body` part that hangs from the root via `BodyJoint`, so the
+  procedural animations work for the designed characters too. The shopkeeper stands behind the lobby kiosk.

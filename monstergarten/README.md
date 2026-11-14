@@ -58,6 +58,18 @@ rojo build -o Monstergarten.rbxlx
 
 ## 4. Character models (babies, parents, NPCs)
 
+**Your designed characters are already in the game.** All 22 characters from the 3D character sheet
+(10 babies, 10 parents, Inspector, Shopkeeper) live in `src/shared/World/CharacterData.lua` and are built
+by `CharacterBuilder` at runtime. To update them after changing the sheet:
+
+```bash
+python3 tools/import_characters.py "Monstergarten – 3D veikėjai.html"
+```
+
+Model priority: a model placed in `ReplicatedStorage/Assets/...` (below) → designed character from
+`CharacterData` → automatic placeholder.
+
+
 The code never needs to change when you add your own models. Put them here (in Studio, or under
 `ReplicatedStorage/Assets` in `default.project.json` with `.rbxm` files):
 

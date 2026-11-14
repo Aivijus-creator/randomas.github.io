@@ -3,6 +3,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Placeholders = require(script.Parent.Placeholders)
+local CharacterBuilder = require(script.Parent.CharacterBuilder)
 
 local ModelRegistry = {}
 
@@ -61,12 +62,13 @@ local function prepare(m: Model): Model
 end
 
 function ModelRegistry.hasAuthorBaby(id: string): boolean
-	return findAuthor("Babies", id) ~= nil
+	return findAuthor("Babies", id) ~= nil or CharacterBuilder.has("Babies", id)
 end
 
+-- Priority: model placed in ReplicatedStorage/Assets  >  designed character (CharacterData)  >  placeholder.
 function ModelRegistry.getBaby(id: string): Model
 	local author = findAuthor("Babies", id)
-	local m = if author then author:Clone() else Placeholders.baby(id)
+	local m = if author then author:Clone() else (CharacterBuilder.build("Babies", id) or Placeholders.baby(id))
 	m.Name = id
 	return prepare(m)
 end
@@ -76,6 +78,11 @@ function ModelRegistry.getParent(id: string): Model
 	if author then
 		return prepare(author:Clone())
 	end
+	local designed = CharacterBuilder.build("Parents", id)
+	if designed then
+		designed.Name = id .. "_Parent"
+		return prepare(designed)
+	end
 	local babyAuthor = findAuthor("Babies", id)
 	local m = Placeholders.parent(id, if babyAuthor then prepare(babyAuthor:Clone()) else nil)
 	return prepare(m)
@@ -83,7 +90,7 @@ end
 
 function ModelRegistry.getNPC(name: string): Model
 	local author = findAuthor("NPCs", name)
-	local m = if author then author:Clone() else Placeholders.npc(name)
+	local m = if author then author:Clone() else (CharacterBuilder.build("NPCs", name) or Placeholders.npc(name))
 	m.Name = name
 	return prepare(m)
 end
