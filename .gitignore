@@ -1,0 +1,7 @@
+# Studio laikini / asmeniniai failai (pagrindinis CepelinuGamykla.rbxlx saugomas repozitorijoje)
+*.rbxl
+*.rbxl.lock
+*.rbxlx.lock
+sourcemap.json
+.DS_Store
+__pycache__/
